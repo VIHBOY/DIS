@@ -2,15 +2,34 @@ package main
 
 import (
 	"context"
+	"encoding/csv"
+	"fmt"
+	"io"
 	"log"
+	"os"
+	"strconv"
 
 	"github.com/VIHBOY/DIS/chat"
 	"google.golang.org/grpc"
 )
 
+type orden struct {
+	id       string
+	producto string
+	valor    int
+	tienda   string
+	destino  string
+}
+
+func NewOrden(id string, producto string, valor int, tienda string, destino string) orden {
+
+	o := orden{id: id, producto: producto, valor: valor, tienda: tienda, destino: destino}
+	return o
+}
+
 func main() {
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist26:9000", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("no se pudo conectar: %s", err)
 	}
@@ -27,4 +46,24 @@ func main() {
 		log.Fatalf("no se pudo DECIR HOLA: %s", err)
 	}
 	log.Printf("respuesta del server %s", response.Body)
+
+	csvfile, err := os.Open("retail.csv")
+	r := csv.NewReader(csvfile)
+
+	for {
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Printf("%s \n", record[0])
+		val, err := strconv.Atoi(record[2])
+
+		orden := NewOrden(record[0], record[1], val, record[3], record[4])
+		fmt.Printf("Holi %s", orden.id)
+
+	}
 }
