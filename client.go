@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/VIHBOY/DIS/chat"
 	"google.golang.org/grpc"
@@ -16,12 +15,13 @@ import (
 type orden struct {
 	id       string
 	producto string
-	valor    int
+	valor    string
 	tienda   string
 	destino  string
 }
 
-func NewOrden(id string, producto string, valor int, tienda string, destino string) orden {
+//NewOrden is
+func NewOrden(id string, producto string, valor string, tienda string, destino string) orden {
 
 	o := orden{id: id, producto: producto, valor: valor, tienda: tienda, destino: destino}
 	return o
@@ -37,15 +37,9 @@ func main() {
 
 	c := chat.NewChatServiceClient(conn)
 
-	message := chat.Message{
-		Body: "Holi soy el cliente",
-	}
-
-	response, err := c.SayHello(context.Background(), &message)
 	if err != nil {
 		log.Fatalf("no se pudo DECIR HOLA: %s", err)
 	}
-	log.Printf("respuesta del server %s", response.Body)
 
 	csvfile, err := os.Open("retail.csv")
 	r := csv.NewReader(csvfile)
@@ -59,12 +53,10 @@ func main() {
 			log.Fatal(err)
 		}
 
-		val, err := strconv.Atoi(record[2])
-
-		orden := NewOrden(record[0], record[1], val, record[3], record[4])
+		orden := NewOrden(record[0], record[1], record[2], record[3], record[4])
 		fmt.Printf("Holi %s\n", orden.producto)
 		message := chat.Message{
-			Body: "Holi soy el "+orden.producto,
+			Body: orden.id + "%" + orden.producto + "%" + orden.valor + "%" + orden.tienda + "%" + orden.destino,
 		}
 		response, err := c.SayHello(context.Background(), &message)
 		log.Printf("respuesta del server %s", response.Body)
