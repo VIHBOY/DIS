@@ -49,7 +49,7 @@ func main() {
 
 	csvfile, err := os.Open("retail.csv")
 	r := csv.NewReader(csvfile)
-
+	r.Read()
 	for {
 		record, err := r.Read()
 		if err == io.EOF {
@@ -59,11 +59,14 @@ func main() {
 			log.Fatal(err)
 		}
 
-		fmt.Printf("%s \n", record[0])
 		val, err := strconv.Atoi(record[2])
 
 		orden := NewOrden(record[0], record[1], val, record[3], record[4])
-		fmt.Printf("Holi %s", orden.id)
-
+		fmt.Printf("Holi %s\n", orden.producto)
+		message := chat.Message{
+			Body: "Holi soy el "+orden.producto,
+		}
+		response, err := c.SayHello(context.Background(), &message)
+		log.Printf("respuesta del server %s", response.Body)
 	}
 }
