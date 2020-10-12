@@ -7,5 +7,7 @@ message Message{
 }
 
 service ChatService{
-	rpc SayHello(Message) returns (Message){}
+	rpc MandarOrden(Message) returns (Message){}
+	rpc Consultar(Message) returns (Message){}
+
 }

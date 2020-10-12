@@ -16,7 +16,7 @@ type Server struct {
 //WriteData is
 func WriteData(tipo string, id string, producto string, valor string, inicio string, destino string) {
 	t := time.Now()
-	timestamp := fmt.Sprintf("%02d-%02d-%d %02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
+	timestamp := fmt.Sprintf("%02d-%02d-%d %02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute())
 
 	registro := []string{timestamp, id, tipo, producto, valor, inicio, destino}
 
@@ -34,12 +34,18 @@ func WriteData(tipo string, id string, producto string, valor string, inicio str
 	csvfile.Close()
 }
 
-func (s *Server) SayHello(ctx context.Context, message *Message) (*Message, error) {
+//MandarOrden is
+func (s *Server) MandarOrden(ctx context.Context, message *Message) (*Message, error) {
 	registro := strings.Split(message.Body, "%")
-	id, producto, valor, inicio, destino := registro[0], registro[1], registro[2], registro[3], registro[4]
-	log.Printf("Rece mensaje form client: %s", message.Body)
-	log.Printf("%s %s %s %s %s", id, producto, valor, inicio, destino)
-	WriteData("retail", id, producto, valor, inicio, destino)
-	trackin := id + "000"
+	id, producto, valor, tienda, destino, tipo := registro[0], registro[1], registro[2], registro[3], registro[4], registro[5]
+	log.Printf("Su codigo de tracking es %s", tipo)
+	WriteData(tipo, id, producto, valor, tienda, destino)
+	trackin := id + "000" + " Para el producto: " + id
+	return &Message{Body: trackin}, nil
+}
+
+//Consultar is
+func (s *Server) Consultar(ctx context.Context, message *Message) (*Message, error) {
+	trackin := "000" + " Para el producto: "
 	return &Message{Body: trackin}, nil
 }
