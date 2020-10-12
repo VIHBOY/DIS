@@ -40,5 +40,6 @@ func (s *Server) SayHello(ctx context.Context, message *Message) (*Message, erro
 	log.Printf("Rece mensaje form client: %s", message.Body)
 	log.Printf("%s %s %s %s %s", id, producto, valor, inicio, destino)
 	WriteData("retail", id, producto, valor, inicio, destino)
-	return &Message{Body: "Golla de server"}, nil
+	trackin := id + "000"
+	return &Message{Body: trackin}, nil
 }

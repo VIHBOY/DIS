@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"encoding/csv"
 	"fmt"
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/VIHBOY/DIS/chat"
 	"google.golang.org/grpc"
@@ -41,24 +43,47 @@ func main() {
 		log.Fatalf("no se pudo DECIR HOLA: %s", err)
 	}
 
-	csvfile, err := os.Open("retail.csv")
-	r := csv.NewReader(csvfile)
-	r.Read()
+	reader := bufio.NewReader(os.Stdin)
+
 	for {
-		record, err := r.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatal(err)
+		fmt.Println("Menú")
+		fmt.Println("---------------------")
+		fmt.Print("1. Cargar Retail \n")
+		fmt.Print("2. Cargar Pymes \n")
+		text, _ := reader.ReadString('\n')
+		// convert CRLF to LF
+		text = strings.Replace(text, "\n", "", -1)
+
+		if strings.Compare("1", text) == 0 {
+			csvfile, _ := os.Open("retail.csv")
+			r := csv.NewReader(csvfile)
+			r.Read()
+			for {
+				record, err := r.Read()
+				if err == io.EOF {
+					break
+				}
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				orden := NewOrden(record[0], record[1], record[2], record[3], record[4])
+				message := chat.Message{
+					Body: orden.id + "%" + orden.producto + "%" + orden.valor + "%" + orden.tienda + "%" + orden.destino,
+				}
+				response, err := c.SayHello(context.Background(), &message)
+				log.Printf("Su codigo de tracking %s", response.Body)
+			}
 		}
 
-		orden := NewOrden(record[0], record[1], record[2], record[3], record[4])
-		fmt.Printf("Holi %s\n", orden.producto)
-		message := chat.Message{
-			Body: orden.id + "%" + orden.producto + "%" + orden.valor + "%" + orden.tienda + "%" + orden.destino,
+		if strings.Compare("2", text) == 0 {
+			fmt.Println("hello, Yourself")
 		}
-		response, err := c.SayHello(context.Background(), &message)
-		log.Printf("respuesta del server %s", response.Body)
+
+		if strings.Compare("exit", text) == 0 {
+			break
+		}
+
 	}
+
 }
