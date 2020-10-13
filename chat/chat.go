@@ -13,7 +13,7 @@ import (
 )
 
 type Server struct {
-	Lista_1 []Orden
+	Lista1 []string
 }
 
 func failOnError(err error, msg string) {
@@ -92,7 +92,22 @@ func (s *Server) Consultar(ctx context.Context, message *Message) (*Message, err
 
 //MandarOrden2 is
 func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, error) {
-	trackin := orden.GetId() + "Hola"
-	me := Message{Body: trackin}
+	s.Lista1 = append(s.Lista1, "Hola", "Poto")
+	trackin := orden.GetId() + "000" + " Para el producto: " + orden.GetId()
+	me := Message{
+		Body: trackin,
+	}
+	WriteData(orden.GetTipo(), orden.GetId(), orden.GetProducto(), orden.GetValor(), orden.GetInicio(), orden.GetDestino())
+
+	Body := orden.GetId() + "%" + trackin + "%" + orden.GetTipo() + "%" + "0" + "%" + "En Bodega"
+	s.Lista1 = append(s.Lista1, Body)
+	return &me, nil
+}
+
+func (s *Server) Recibir(ctx context.Context) (*Message, error) {
+
+	me := Message{
+		Body: "trackin",
+	}
 	return &me, nil
 }

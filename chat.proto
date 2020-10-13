@@ -22,4 +22,6 @@ service ChatService{
 	rpc MandarOrden(Message) returns (Message){}
 	rpc Consultar(Message) returns (Message){}
 	rpc MandarOrden2(Orden) returns (Message){}
+	rpc MandarOrden2() returns (Message){}
+
 }
