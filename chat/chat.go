@@ -13,6 +13,7 @@ import (
 )
 
 type Server struct {
+	Lista_1 []Orden
 }
 
 func failOnError(err error, msg string) {
@@ -45,9 +46,9 @@ func WriteData(tipo string, id string, producto string, valor string, inicio str
 //MandarOrden is
 func (s *Server) MandarOrden(ctx context.Context, message *Message) (*Message, error) {
 	registro := strings.Split(message.Body, "%")
-	id, producto, valor, tienda, destino, tipo := registro[0], registro[1], registro[2], registro[3], registro[4], registro[5]
-	log.Printf("Su codigo de tracking es %s", tipo)
-	WriteData(tipo, id, producto, valor, tienda, destino)
+	id, producto, valor, inicio, destino, tipo := registro[0], registro[1], registro[2], registro[3], registro[4], registro[5]
+	log.Printf("Su codigo de tracking es %s", id)
+	WriteData(tipo, id, producto, valor, inicio, destino)
 	trackin := id + "000" + " Para el producto: " + id
 	//MURO DE BERLINI
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
@@ -87,4 +88,11 @@ func (s *Server) MandarOrden(ctx context.Context, message *Message) (*Message, e
 func (s *Server) Consultar(ctx context.Context, message *Message) (*Message, error) {
 	trackin := "000" + " Para el producto: "
 	return &Message{Body: trackin}, nil
+}
+
+//MandarOrden2 is
+func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, error) {
+	trackin := orden.GetId() + "Hola"
+	me := Message{Body: trackin}
+	return &me, nil
 }

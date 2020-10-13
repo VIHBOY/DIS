@@ -29,6 +29,140 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
+type Orden struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id       string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Producto string `protobuf:"bytes,2,opt,name=producto,proto3" json:"producto,omitempty"`
+	Valor    string `protobuf:"bytes,3,opt,name=valor,proto3" json:"valor,omitempty"`
+	Inicio   string `protobuf:"bytes,4,opt,name=inicio,proto3" json:"inicio,omitempty"`
+	Destino  string `protobuf:"bytes,5,opt,name=destino,proto3" json:"destino,omitempty"`
+	Tipo     string `protobuf:"bytes,6,opt,name=tipo,proto3" json:"tipo,omitempty"`
+}
+
+func (x *Orden) Reset() {
+	*x = Orden{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chat_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Orden) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Orden) ProtoMessage() {}
+
+func (x *Orden) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Orden.ProtoReflect.Descriptor instead.
+func (*Orden) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Orden) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Orden) GetProducto() string {
+	if x != nil {
+		return x.Producto
+	}
+	return ""
+}
+
+func (x *Orden) GetValor() string {
+	if x != nil {
+		return x.Valor
+	}
+	return ""
+}
+
+func (x *Orden) GetInicio() string {
+	if x != nil {
+		return x.Inicio
+	}
+	return ""
+}
+
+func (x *Orden) GetDestino() string {
+	if x != nil {
+		return x.Destino
+	}
+	return ""
+}
+
+func (x *Orden) GetTipo() string {
+	if x != nil {
+		return x.Tipo
+	}
+	return ""
+}
+
+type ListOrden struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Orden []*Orden `protobuf:"bytes,1,rep,name=orden,proto3" json:"orden,omitempty"`
+}
+
+func (x *ListOrden) Reset() {
+	*x = ListOrden{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chat_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListOrden) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOrden) ProtoMessage() {}
+
+func (x *ListOrden) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOrden.ProtoReflect.Descriptor instead.
+func (*ListOrden) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ListOrden) GetOrden() []*Orden {
+	if x != nil {
+		return x.Orden
+	}
+	return nil
+}
+
 type Message struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -40,7 +174,7 @@ type Message struct {
 func (x *Message) Reset() {
 	*x = Message{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_chat_proto_msgTypes[0]
+		mi := &file_chat_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -53,7 +187,7 @@ func (x *Message) String() string {
 func (*Message) ProtoMessage() {}
 
 func (x *Message) ProtoReflect() protoreflect.Message {
-	mi := &file_chat_proto_msgTypes[0]
+	mi := &file_chat_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -66,7 +200,7 @@ func (x *Message) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Message.ProtoReflect.Descriptor instead.
 func (*Message) Descriptor() ([]byte, []int) {
-	return file_chat_proto_rawDescGZIP(), []int{0}
+	return file_chat_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Message) GetBody() string {
@@ -80,16 +214,31 @@ var File_chat_proto protoreflect.FileDescriptor
 
 var file_chat_proto_rawDesc = []byte{
 	0x0a, 0x0a, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x04, 0x63, 0x68,
-	0x61, 0x74, 0x22, 0x1d, 0x0a, 0x07, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x12, 0x0a,
-	0x04, 0x62, 0x6f, 0x64, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x62, 0x6f, 0x64,
-	0x79, 0x32, 0x69, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
-	0x12, 0x2d, 0x0a, 0x0b, 0x4d, 0x61, 0x6e, 0x64, 0x61, 0x72, 0x4f, 0x72, 0x64, 0x65, 0x6e, 0x12,
+	0x61, 0x74, 0x22, 0x8f, 0x01, 0x0a, 0x05, 0x4f, 0x72, 0x64, 0x65, 0x6e, 0x12, 0x0e, 0x0a, 0x02,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1a, 0x0a, 0x08,
+	0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x6f, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x6f, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x6f,
+	0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x6f, 0x72, 0x12, 0x16,
+	0x0a, 0x06, 0x69, 0x6e, 0x69, 0x63, 0x69, 0x6f, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x69, 0x6e, 0x69, 0x63, 0x69, 0x6f, 0x12, 0x18, 0x0a, 0x07, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e,
+	0x6f, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x6f,
+	0x12, 0x12, 0x0a, 0x04, 0x74, 0x69, 0x70, 0x6f, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
+	0x74, 0x69, 0x70, 0x6f, 0x22, 0x2e, 0x0a, 0x09, 0x4c, 0x69, 0x73, 0x74, 0x4f, 0x72, 0x64, 0x65,
+	0x6e, 0x12, 0x21, 0x0a, 0x05, 0x6f, 0x72, 0x64, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b,
+	0x32, 0x0b, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x6e, 0x52, 0x05, 0x6f,
+	0x72, 0x64, 0x65, 0x6e, 0x22, 0x1d, 0x0a, 0x07, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12,
+	0x12, 0x0a, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x62,
+	0x6f, 0x64, 0x79, 0x32, 0x97, 0x01, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x74, 0x53, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x12, 0x2d, 0x0a, 0x0b, 0x4d, 0x61, 0x6e, 0x64, 0x61, 0x72, 0x4f, 0x72, 0x64,
+	0x65, 0x6e, 0x12, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67,
+	0x65, 0x1a, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x22, 0x00, 0x12, 0x2b, 0x0a, 0x09, 0x43, 0x6f, 0x6e, 0x73, 0x75, 0x6c, 0x74, 0x61, 0x72, 0x12,
 	0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x0d,
 	0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12,
-	0x2b, 0x0a, 0x09, 0x43, 0x6f, 0x6e, 0x73, 0x75, 0x6c, 0x74, 0x61, 0x72, 0x12, 0x0d, 0x2e, 0x63,
-	0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x0d, 0x2e, 0x63, 0x68,
-	0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x2c, 0x0a, 0x0c, 0x4d, 0x61, 0x6e, 0x64, 0x61, 0x72, 0x4f, 0x72, 0x64, 0x65, 0x6e, 0x32, 0x12,
+	0x0b, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x6e, 0x1a, 0x0d, 0x2e, 0x63,
+	0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -104,20 +253,25 @@ func file_chat_proto_rawDescGZIP() []byte {
 	return file_chat_proto_rawDescData
 }
 
-var file_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_chat_proto_goTypes = []interface{}{
-	(*Message)(nil), // 0: chat.Message
+	(*Orden)(nil),     // 0: chat.Orden
+	(*ListOrden)(nil), // 1: chat.ListOrden
+	(*Message)(nil),   // 2: chat.Message
 }
 var file_chat_proto_depIdxs = []int32{
-	0, // 0: chat.ChatService.MandarOrden:input_type -> chat.Message
-	0, // 1: chat.ChatService.Consultar:input_type -> chat.Message
-	0, // 2: chat.ChatService.MandarOrden:output_type -> chat.Message
-	0, // 3: chat.ChatService.Consultar:output_type -> chat.Message
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: chat.ListOrden.orden:type_name -> chat.Orden
+	2, // 1: chat.ChatService.MandarOrden:input_type -> chat.Message
+	2, // 2: chat.ChatService.Consultar:input_type -> chat.Message
+	0, // 3: chat.ChatService.MandarOrden2:input_type -> chat.Orden
+	2, // 4: chat.ChatService.MandarOrden:output_type -> chat.Message
+	2, // 5: chat.ChatService.Consultar:output_type -> chat.Message
+	2, // 6: chat.ChatService.MandarOrden2:output_type -> chat.Message
+	4, // [4:7] is the sub-list for method output_type
+	1, // [1:4] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_chat_proto_init() }
@@ -127,6 +281,30 @@ func file_chat_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_chat_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Orden); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chat_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListOrden); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chat_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Message); i {
 			case 0:
 				return &v.state
@@ -145,7 +323,7 @@ func file_chat_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_chat_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -173,6 +351,7 @@ const _ = grpc.SupportPackageIsVersion6
 type ChatServiceClient interface {
 	MandarOrden(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
 	Consultar(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
+	MandarOrden2(ctx context.Context, in *Orden, opts ...grpc.CallOption) (*Message, error)
 }
 
 type chatServiceClient struct {
@@ -201,10 +380,20 @@ func (c *chatServiceClient) Consultar(ctx context.Context, in *Message, opts ...
 	return out, nil
 }
 
+func (c *chatServiceClient) MandarOrden2(ctx context.Context, in *Orden, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
+	err := c.cc.Invoke(ctx, "/chat.ChatService/MandarOrden2", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatServiceServer is the server API for ChatService service.
 type ChatServiceServer interface {
 	MandarOrden(context.Context, *Message) (*Message, error)
 	Consultar(context.Context, *Message) (*Message, error)
+	MandarOrden2(context.Context, *Orden) (*Message, error)
 }
 
 // UnimplementedChatServiceServer can be embedded to have forward compatible implementations.
@@ -216,6 +405,9 @@ func (*UnimplementedChatServiceServer) MandarOrden(context.Context, *Message) (*
 }
 func (*UnimplementedChatServiceServer) Consultar(context.Context, *Message) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Consultar not implemented")
+}
+func (*UnimplementedChatServiceServer) MandarOrden2(context.Context, *Orden) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MandarOrden2 not implemented")
 }
 
 func RegisterChatServiceServer(s *grpc.Server, srv ChatServiceServer) {
@@ -258,6 +450,24 @@ func _ChatService_Consultar_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatService_MandarOrden2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Orden)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServiceServer).MandarOrden2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.ChatService/MandarOrden2",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServiceServer).MandarOrden2(ctx, req.(*Orden))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ChatService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.ChatService",
 	HandlerType: (*ChatServiceServer)(nil),
@@ -269,6 +479,10 @@ var _ChatService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Consultar",
 			Handler:    _ChatService_Consultar_Handler,
+		},
+		{
+			MethodName: "MandarOrden2",
+			Handler:    _ChatService_MandarOrden2_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

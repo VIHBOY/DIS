@@ -1,6 +1,18 @@
 syntax = "proto3";
 package chat;
 
+message Orden  {
+    string id = 1;
+	string producto = 2;
+	string valor = 3;
+	string inicio = 4;
+	string destino = 5;
+	string tipo = 6;
+}
+
+message ListOrden {
+  repeated Orden orden = 1;
+}
 
 message Message{
 	 string body = 1;
@@ -9,5 +21,5 @@ message Message{
 service ChatService{
 	rpc MandarOrden(Message) returns (Message){}
 	rpc Consultar(Message) returns (Message){}
-
+	rpc MandarOrden2(Orden) returns (Message){}
 }
