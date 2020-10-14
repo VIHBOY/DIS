@@ -69,11 +69,15 @@ func main() {
 					log.Fatal(err)
 				}
 
-				orden := NewOrden(record[0], record[1], record[2], record[3], record[4], "retail")
-				message := chat.Message{
-					Body: orden.id + "%" + orden.producto + "%" + orden.valor + "%" + orden.tienda + "%" + orden.destino + "%" + orden.tipo,
+				message := chat.Orden{
+					Id:       record[0],
+					Producto: record[1],
+					Valor:    record[2],
+					Inicio:   record[3],
+					Destino:  record[4],
+					Tipo:     "retail",
 				}
-				response, err := c.MandarOrden(context.Background(), &message)
+				response, err := c.MandarOrden2(context.Background(), &message)
 				log.Printf("Su codigo de tracking es %s", response.Body)
 			}
 		}

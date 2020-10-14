@@ -9,6 +9,9 @@ import (
 	"google.golang.org/grpc"
 )
 
+type Server struct {
+}
+
 //CreateFile is
 func CreateFile(name string) {
 	csvFile, err := os.Create(name)
@@ -20,18 +23,27 @@ func CreateFile(name string) {
 	csvFile.Close()
 }
 
+func connect(l net.Listener) {
+	s := chat.Server{}
+	grpcServer := grpc.NewServer()
+	chat.RegisterChatServiceServer(grpcServer, &s)
+	if err := grpcServer.Serve(l); err != nil {
+		log.Fatalf("Failed to serve gRPC server over port 9000: %v", err)
+	}
+}
+
 func main() {
 	CreateFile("dblogistica.csv")
 	lis, err := net.Listen("tcp", ":9000")
 	if err != nil {
-		log.Fatalf("Failed %v", err)
+		log.Fatal(err)
 	}
-	s := chat.Server{}
-	grpcServer := grpc.NewServer()
-
-	chat.RegisterChatServiceServer(grpcServer, &s)
-
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve gRPC server over port 9000: %v", err)
+	lis2, err := net.Listen("tcp", ":900")
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	go connect(lis)
+	connect(lis2)
+
 }
