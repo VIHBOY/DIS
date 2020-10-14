@@ -13,7 +13,10 @@ import (
 )
 
 type Server struct {
-	Lista1 []string
+	Lista1     []string
+	ColaNormal []string
+	ColaPrio   []string
+	ColaRetail []string
 }
 
 func failOnError(err error, msg string) {
@@ -99,8 +102,15 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 	WriteData(orden.GetTipo(), orden.GetId(), orden.GetProducto(), orden.GetValor(), orden.GetInicio(), orden.GetDestino())
 
 	Body := orden.GetId() + "%" + trackin + "%" + orden.GetTipo() + "%" + "0" + "%" + "En Bodega"
-	fmt.Print(Body)
-	s.Lista1 = append(s.Lista1, Body)
+	if orden.GetTipo() == "retail" {
+		s.ColaRetail = append(s.ColaRetail, Body)
+	}
+	if orden.GetTipo() == "normal" {
+		s.ColaNormal = append(s.ColaNormal, Body)
+	}
+	if orden.GetTipo() == "prioritario" {
+		s.ColaPrio = append(s.ColaPrio, Body)
+	}
 	return &me, nil
 }
 

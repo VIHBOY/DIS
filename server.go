@@ -33,6 +33,18 @@ func connect(l net.Listener) {
 }
 
 func main() {
+	ColaRetail := Cola{
+		Nombre:   "Retail",
+		Cantidad: 0,
+	}
+	ColaNormal := Cola{
+		Nombre:   "Normal",
+		Cantidad: 0,
+	}
+	ColaPrio := Cola{
+		Nombre:   "Prioritario",
+		Cantidad: 0,
+	}
 	CreateFile("dblogistica.csv")
 	lis, err := net.Listen("tcp", ":9000")
 	if err != nil {
