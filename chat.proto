@@ -12,11 +12,10 @@ message Orden  {
 
 message Paquete  {
     string id = 1;
-	string producto = 2;
-	string valor = 3;
-	string inicio = 4;
-	string destino = 5;
-	string tipo = 6;
+	string track = 2;
+	string tipo = 3;
+	string intentos = 4;
+	string estado = 5;
 }
 
 message Message{
