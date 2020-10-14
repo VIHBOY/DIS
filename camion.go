@@ -6,40 +6,31 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/VIHBOY/DIS/chat"
 	"google.golang.org/grpc"
 )
 
-type Cola struct {
-	Nombre   string
-	Cola     []string
-	Cantidad int
-}
-
 type Camion struct {
 	Nombre      string
 	Paquete1    string
 	Paquete2    string
-	LlevoRetail string
+	LleveRetail string
 }
 
 //NewOrden is
 
 func main() {
-	ColaRetail := Cola{
-		Nombre:   "Retail",
-		Cantidad: 0,
+
+	CamionRetail1 := Camion{
+		Nombre: "Retail",
 	}
-	ColaNormal := Cola{
-		Nombre:   "Normal",
-		Cantidad: 0,
+	CamionRetail2 := Camion{
+		Nombre: "Retail",
 	}
-	ColaPrio := Cola{
-		Nombre:   "Prioritario",
-		Cantidad: 0,
+	CamionNormal := Camion{
+		Nombre: "Normal",
 	}
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
@@ -61,35 +52,28 @@ func main() {
 	tenvio, _ := reader.ReadString('\n')
 	log.Printf("Tiempo espera Camion: %s", tespera)
 	log.Printf("Tiempo de envio Camion: %s", tenvio)
-	message := chat.Message{
-		Body: "%",
-	}
+
 	var2 := time.Duration(5) * time.Second
 	for {
+		message := chat.Message{
+			Body: CamionRetail1.Nombre,
+		}
 		time.Sleep(var2)
 		response, _ := c.Recibir(context.Background(), &message)
-		registro := strings.Split(response.Body, "%")
-		id, track, tipo, intentos, estados := registro[0], registro[1], registro[2], registro[3], registro[4]
-
+		fmt.Println(response.Body)
+		message = chat.Message{
+			Body: CamionRetail2.Nombre,
+		}
 		time.Sleep(var2)
 		response, _ = c.Recibir(context.Background(), &message)
-		registro = strings.Split(response.Body, "%")
-		id, track, tipo, intentos, estados = registro[0], registro[1], registro[2], registro[3], registro[4]
-		if tipo == "retail" {
-			log.Printf("Su Recibio IF: %s", tipo)
-			append(ColaRetail.Cola, id+"%"+track+"%"+tipo+"%"+intentos+"%"+estados)
-			ColaRetail.Cantidad++
+		fmt.Println(response.Body)
+		message = chat.Message{
+			Body: CamionNormal.Nombre,
 		}
-		if tipo == "normal" {
-			log.Printf("Su Recibio IF: %s", tipo)
-			append(ColaNormal.Cola, id+"%"+track+"%"+tipo+"%"+intentos+"%"+estados)
-			ColaNormal.Cantidad++
-		}
-		if tipo == "prioritario" {
-			log.Printf("Su Recibio IF: %s", tipo)
-			append(ColaPrio.Cola, id+"%"+track+"%"+tipo+"%"+intentos+"%"+estados)
-			ColaPrio.Cantidad++
-		}
+		time.Sleep(var2)
+		response, _ = c.Recibir(context.Background(), &message)
+		fmt.Println(response.Body)
+
 	}
 
 }

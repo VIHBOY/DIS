@@ -15,6 +15,9 @@ import (
 type Server struct {
 	Lista1         []string
 	ColaNormal     []string
+	ColaNormal2    []Paquete
+	ColaPrio2      []Paquete
+	ColaRetail2    []Paquete
 	CantidadNormal int
 	ColaPrio       []string
 	CantidadPrio   int
@@ -114,15 +117,17 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 		Tipo:     orden.GetTipo(),
 	})
 	Body := orden.GetId() + "%" + track + "%" + orden.GetTipo() + "%" + "0" + "%" + "En Bodega"
-	Paquete := Paquete{
+	paquete := Paquete{
 		Id:       orden.GetId(),
 		Track:    track,
 		Tipo:     orden.GetTipo(),
 		Intentos: 0,
-		Estado:   orden.GetDestino(),
+		Estado:   "En Bodega",
 	}
+	fmt.Printf(Paquete.GetId())
 	if orden.GetTipo() == "retail" {
 		s.ColaRetail = append(s.ColaRetail, Body)
+		s.ColaRetail2 = append(s.Lista, paquete)
 		s.CantidadRetail++
 	}
 	if orden.GetTipo() == "normal" {

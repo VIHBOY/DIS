@@ -20,3 +20,11 @@ CamionR1 := Camion{
 		Nombre:   "Normal",
 		Cantidad: 0,
 	}
+
+
+		CamionRetail1 := Camion{
+		Nombre: "Retail",
+	}
+	CamionRetail2 := Camion{
+		Nombre: "Retail",
+	}
