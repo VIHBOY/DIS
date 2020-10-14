@@ -124,18 +124,40 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 		Intentos: 0,
 		Estado:   "En Bodega",
 	}
-	fmt.Printf(Paquete.GetId())
+
+	fmt.Printf(paquete.GetId())
 	if orden.GetTipo() == "retail" {
 		s.ColaRetail = append(s.ColaRetail, Body)
-		s.ColaRetail2 = append(s.Lista, paquete)
+		s.ColaRetail2 = append(s.ColaNormal2, Paquete{
+			Id:       orden.GetId(),
+			Track:    track,
+			Tipo:     orden.GetTipo(),
+			Intentos: 0,
+			Estado:   "En Bodega",
+		})
+		fmt.Println(s.ColaRetail2[0].GetTrack())
 		s.CantidadRetail++
 	}
 	if orden.GetTipo() == "normal" {
 		s.ColaNormal = append(s.ColaNormal, Body)
+		s.ColaNormal2 = append(s.ColaNormal2, Paquete{
+			Id:       orden.GetId(),
+			Track:    track,
+			Tipo:     orden.GetTipo(),
+			Intentos: 0,
+			Estado:   "En Bodega",
+		})
 		s.CantidadNormal++
 	}
 	if orden.GetTipo() == "prioritario" {
 		s.ColaPrio = append(s.ColaPrio, Body)
+		s.ColaPrio2 = append(s.ColaNormal2, Paquete{
+			Id:       orden.GetId(),
+			Track:    track,
+			Tipo:     orden.GetTipo(),
+			Intentos: 0,
+			Estado:   "En Bodega",
+		})
 		s.CantidadPrio++
 	}
 	return &me, nil
@@ -171,6 +193,49 @@ func (s *Server) Recibir(ctx context.Context, message *Message) (*Message, error
 			}
 			s.CantidadRetail--
 			remove(s.ColaRetail, 0)
+		}
+
+	}
+	return &me, nil
+}
+
+func remove2(slice []Paquete, s int) []Paquete {
+	return append(slice[:s], slice[s+1:]...)
+}
+func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, error) {
+	var me Paquete
+	if message.GetBody() == "Retail" {
+		if s.CantidadRetail > 0 {
+			me = Paquete{
+				Id:       s.ColaRetail2[0].GetId(),
+				Track:    s.ColaRetail2[0].GetTrack(),
+				Tipo:     s.ColaRetail2[0].GetTipo(),
+				Intentos: s.ColaRetail2[0].GetIntentos(),
+				Estado:   s.ColaRetail2[0].GetEstado(),
+			}
+			remove2(s.ColaRetail2, 0)
+		}
+
+	}
+	if message.GetBody() == "Normal" {
+		if len(s.ColaPrio2) > 0 {
+			me = Paquete{
+				Id:       s.ColaPrio2[0].GetId(),
+				Track:    s.ColaPrio2[0].GetTrack(),
+				Tipo:     s.ColaPrio2[0].GetTipo(),
+				Intentos: s.ColaPrio2[0].GetIntentos(),
+				Estado:   s.ColaPrio2[0].GetEstado(),
+			}
+			remove2(s.ColaPrio2, 0)
+		} else {
+			me = Paquete{
+				Id:       s.ColaRetail2[0].GetId(),
+				Track:    s.ColaRetail2[0].GetTrack(),
+				Tipo:     s.ColaRetail2[0].GetTipo(),
+				Intentos: s.ColaRetail2[0].GetIntentos(),
+				Estado:   s.ColaRetail2[0].GetEstado(),
+			}
+			remove2(s.ColaRetail2, 0)
 		}
 
 	}
