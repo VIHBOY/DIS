@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/VIHBOY/DIS/chat"
@@ -13,8 +14,9 @@ import (
 )
 
 type Cola struct {
-	Nombre string
-	Cola   []string
+	Nombre   string
+	Cola     []string
+	Cantidad int
 }
 
 type Camion struct {
@@ -27,7 +29,18 @@ type Camion struct {
 //NewOrden is
 
 func main() {
-
+	ColaRetail := Cola{
+		Nombre:   "Retail",
+		Cantidad: 0,
+	}
+	ColaNormal := Cola{
+		Nombre:   "Normal",
+		Cantidad: 0,
+	}
+	ColaPrio := Cola{
+		Nombre:   "Prioritario",
+		Cantidad: 0,
+	}
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
@@ -55,10 +68,42 @@ func main() {
 	for {
 		time.Sleep(var2)
 		response, _ := c.Recibir(context.Background(), &message)
-		log.Printf("Su codigo de tracking es %s", response.Body)
+		registro := strings.Split(response.Body, "%")
+		id, track, tipo, intentos, estados := registro[0], registro[1], registro[2], registro[3], registro[4]
+		if tipo == "retail" {
+			log.Printf("Su Recibio IF: %s", tipo)
+			append(ColaRetail.Cola, id+"%"+track+"%"+tipo+"%"+intentos+"%"+estados)
+			ColaRetail.Cantidad++
+		}
+		if tipo == "normal" {
+			log.Printf("Su Recibio IF: %s", tipo)
+			append(ColaNormal.Cola, id+"%"+track+"%"+tipo+"%"+intentos+"%"+estados)
+			ColaNormal.Cantidad++
+		}
+		if tipo == "prioritario" {
+			log.Printf("Su Recibio IF: %s", tipo)
+			append(ColaPrio.Cola, id+"%"+track+"%"+tipo+"%"+intentos+"%"+estados)
+			ColaPrio.Cantidad++
+		}
 		time.Sleep(var2)
 		response, _ = c.Recibir(context.Background(), &message)
-		log.Printf("Su codigo de tracking es %s", response.Body)
+		registro = strings.Split(response.Body, "%")
+		id, track, tipo, intentos, estados = registro[0], registro[1], registro[2], registro[3], registro[4]
+		if tipo == "retail" {
+			log.Printf("Su Recibio IF: %s", tipo)
+			append(ColaRetail.Cola, id+"%"+track+"%"+tipo+"%"+intentos+"%"+estados)
+			ColaRetail.Cantidad++
+		}
+		if tipo == "normal" {
+			log.Printf("Su Recibio IF: %s", tipo)
+			append(ColaNormal.Cola, id+"%"+track+"%"+tipo+"%"+intentos+"%"+estados)
+			ColaNormal.Cantidad++
+		}
+		if tipo == "prioritario" {
+			log.Printf("Su Recibio IF: %s", tipo)
+			append(ColaPrio.Cola, id+"%"+track+"%"+tipo+"%"+intentos+"%"+estados)
+			ColaPrio.Cantidad++
+		}
 	}
 
 }

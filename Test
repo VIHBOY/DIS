@@ -1,0 +1,22 @@
+CamionR1 := Camion{
+		Nombre: "Retail",
+	}
+	CamioonR2 := Camion{
+		Nombre: "Retail",
+	}
+	CamionN := Camion{
+		Nombre: "Normal",
+	}
+
+	ColaPrio := Cola{
+		Nombre:   "Prioritario",
+		Cantidad: 0,
+	}
+	ColaRetail := Cola{
+		Nombre:   "Retail",
+		Cantidad: 0,
+	}
+	ColaNormal := Cola{
+		Nombre:   "Normal",
+		Cantidad: 0,
+	}
