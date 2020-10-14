@@ -14,7 +14,7 @@ message Paquete  {
     string id = 1;
 	string track = 2;
 	string tipo = 3;
-	string intentos = 4;
+	int32 intentos = 4;
 	string estado = 5;
 }
 

@@ -114,6 +114,13 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 		Tipo:     orden.GetTipo(),
 	})
 	Body := orden.GetId() + "%" + track + "%" + orden.GetTipo() + "%" + "0" + "%" + "En Bodega"
+	Paquete := Paquete{
+		Id:       orden.GetId(),
+		Track:    track,
+		Tipo:     orden.GetTipo(),
+		Intentos: 0,
+		Estado:   orden.GetDestino(),
+	}
 	if orden.GetTipo() == "retail" {
 		s.ColaRetail = append(s.ColaRetail, Body)
 		s.CantidadRetail++
