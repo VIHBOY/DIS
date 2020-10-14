@@ -10,8 +10,13 @@ message Orden  {
 	string tipo = 6;
 }
 
-message ListOrden {
-  repeated Orden orden = 1;
+message Paquete  {
+    string id = 1;
+	string producto = 2;
+	string valor = 3;
+	string inicio = 4;
+	string destino = 5;
+	string tipo = 6;
 }
 
 message Message{

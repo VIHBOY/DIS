@@ -13,10 +13,14 @@ import (
 )
 
 type Server struct {
-	Lista1     []string
-	ColaNormal []string
-	ColaPrio   []string
-	ColaRetail []string
+	Lista1         []string
+	ColaNormal     []string
+	CantidadNormal int
+	ColaPrio       []string
+	CantidadPrio   int
+	ColaRetail     []string
+	CantidadRetail int
+	Lista          []Orden
 }
 
 func failOnError(err error, msg string) {
@@ -99,17 +103,28 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 	me := Message{
 		Body: trackin,
 	}
+	track := orden.GetId() + "000"
 	WriteData(orden.GetTipo(), orden.GetId(), orden.GetProducto(), orden.GetValor(), orden.GetInicio(), orden.GetDestino())
-
-	Body := orden.GetId() + "%" + trackin + "%" + orden.GetTipo() + "%" + "0" + "%" + "En Bodega"
+	s.Lista = append(s.Lista, Orden{
+		Id:       orden.GetId(),
+		Producto: orden.GetProducto(),
+		Valor:    orden.GetValor(),
+		Inicio:   orden.GetValor(),
+		Destino:  orden.GetDestino(),
+		Tipo:     orden.GetTipo(),
+	})
+	Body := orden.GetId() + "%" + track + "%" + orden.GetTipo() + "%" + "0" + "%" + "En Bodega"
 	if orden.GetTipo() == "retail" {
 		s.ColaRetail = append(s.ColaRetail, Body)
+		s.CantidadRetail++
 	}
 	if orden.GetTipo() == "normal" {
 		s.ColaNormal = append(s.ColaNormal, Body)
+		s.CantidadNormal++
 	}
 	if orden.GetTipo() == "prioritario" {
 		s.ColaPrio = append(s.ColaPrio, Body)
+		s.CantidadPrio++
 	}
 	return &me, nil
 }
@@ -119,8 +134,33 @@ func remove(slice []string, s int) []string {
 }
 func (s *Server) Recibir(ctx context.Context, message *Message) (*Message, error) {
 	me := Message{
-		Body: s.Lista1[0],
+		Body: "",
 	}
-	remove(s.Lista1, 0)
+	if message.GetBody() == "Retail" {
+		if s.CantidadRetail > 0 {
+			me = Message{
+				Body: s.ColaRetail[0],
+			}
+			remove(s.ColaRetail, 0)
+			s.CantidadRetail--
+		}
+
+	}
+	if message.GetBody() == "Normal" {
+		if s.CantidadPrio > 0 {
+			me = Message{
+				Body: s.ColaPrio[0],
+			}
+			remove(s.ColaPrio, 0)
+			s.CantidadPrio--
+		} else {
+			me = Message{
+				Body: s.ColaRetail[0],
+			}
+			s.CantidadRetail--
+			remove(s.ColaRetail, 0)
+		}
+
+	}
 	return &me, nil
 }
