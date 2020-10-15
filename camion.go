@@ -33,7 +33,10 @@ func Send(camion Camion) {
 	camion.Paquete2 = p2
 	fmt.Println(camion.Paquete1.GetId())
 	fmt.Println(camion.Paquete2.GetId())
-
+	me := chat.Message{
+		Body: camion.Paquete1.GetTrack() + "%" + "En Camino",
+	}
+	c.CambiarEstado(context.Background(), &me)
 }
 func main() {
 

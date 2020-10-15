@@ -99,7 +99,6 @@ func (s *Server) MandarOrden(ctx context.Context, message *Message) (*Message, e
 func (s *Server) Consultar(ctx context.Context, message *Message) (*Message, error) {
 	x := message.GetBody()
 	x3 := x
-	x2 := ""
 	log.Println(x)
 	me := Message{
 		Body: x[0 : len(x)-3],
@@ -107,7 +106,7 @@ func (s *Server) Consultar(ctx context.Context, message *Message) (*Message, err
 
 	for i := len(s.ListaTotalCola) - 1; i >= 0; i-- {
 		if x3 == s.ListaTotalCola[i].GetTrack() {
-			log.Println(s.ListaTotalCola.GetEstado())
+			log.Println(s.ListaTotalCola[i].GetEstado())
 		}
 	}
 
@@ -243,7 +242,7 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 	return &me, nil
 }
 
-func (s *Server) Recibir(ctx context.Context, message *Message) (*Message, error) {
+func (s *Server) CambiarEstado(ctx context.Context, message *Message) (*Message, error) {
 	registro := strings.Split(message.Body, "%")
 	//9000%encamino
 	track, es := registro[0], registro[1]
