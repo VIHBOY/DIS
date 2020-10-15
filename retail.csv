@@ -2,9 +2,9 @@ id,producto,valor,tienda,destino
 1,Polera,10,tienda-A,casa-A
 2,Pantalón,12,tienda-B,casa-B
 3,Televisor,110,tienda-C,casa-C
-1,Polera,10,tienda-A,casa-A
-2,Pantalón,12,tienda-B,casa-B
-3,Televisor,110,tienda-C,casa-C
-1,Polera,10,tienda-A,casa-A
-2,Pantalón,12,tienda-B,casa-B
-3,Televisor,110,tienda-C,casa-C
+4,Polera,10,tienda-A,casa-A
+5,Pantalón,12,tienda-B,casa-B
+6,Televisor,110,tienda-C,casa-C
+7,Polera,10,tienda-A,casa-A
+8,Pantalón,12,tienda-B,casa-B
+9,Televisor,110,tienda-C,casa-C
