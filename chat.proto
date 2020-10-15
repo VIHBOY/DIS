@@ -28,6 +28,5 @@ service ChatService{
 	rpc MandarOrden2(Orden) returns (Message){}
 	rpc Recibir(Message) returns (Message){}
 	rpc Recibir2(Message) returns (Paquete){}
-
-
+	rpc CambiarEstado(Message) returns (Message){}
 }

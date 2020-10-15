@@ -24,6 +24,7 @@ type Server struct {
 	ColaRetail     []string
 	CantidadRetail int
 	Lista          []Orden
+	ListaTotalCola []Paquete
 }
 
 func failOnError(err error, msg string) {
@@ -96,8 +97,21 @@ func (s *Server) MandarOrden(ctx context.Context, message *Message) (*Message, e
 
 //Consultar is
 func (s *Server) Consultar(ctx context.Context, message *Message) (*Message, error) {
-	trackin := "000" + " Para el producto: "
-	return &Message{Body: trackin}, nil
+	x := message.GetBody()
+	x3 := x
+	x2 := ""
+	log.Println(x)
+	me := Message{
+		Body: x[0 : len(x)-3],
+	}
+
+	for i := len(s.ListaTotalCola) - 1; i >= 0; i-- {
+		if x3 == s.ListaTotalCola[i].GetTrack() {
+			log.Println(s.ListaTotalCola.GetEstado())
+		}
+	}
+
+	return &me, nil
 }
 
 //MandarOrden2 is
@@ -112,14 +126,12 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 		Id:       orden.GetId(),
 		Producto: orden.GetProducto(),
 		Valor:    orden.GetValor(),
-		Inicio:   orden.GetValor(),
+		Inicio:   orden.GetInicio(),
 		Destino:  orden.GetDestino(),
 		Tipo:     orden.GetTipo(),
 	})
-	Body := orden.GetId() + "%" + track + "%" + orden.GetTipo() + "%" + "0" + "%" + "En Bodega"
 
 	if orden.GetTipo() == "retail" {
-		s.ColaRetail = append(s.ColaRetail, Body)
 		s.ColaRetail2 = append(s.ColaRetail2, Paquete{
 			Id:       orden.GetId(),
 			Track:    track,
@@ -127,12 +139,24 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 			Intentos: 0,
 			Estado:   "En Bodega",
 		})
-		fmt.Println(s.ColaRetail2[0].GetTrack())
+		s.ListaTotalCola = append(s.ListaTotalCola, Paquete{
+			Id:       orden.GetId(),
+			Track:    track,
+			Tipo:     orden.GetTipo(),
+			Intentos: 0,
+			Estado:   "En Bodega",
+		})
 		s.CantidadRetail++
 	}
 	if orden.GetTipo() == "normal" {
-		s.ColaNormal = append(s.ColaNormal, Body)
 		s.ColaNormal2 = append(s.ColaNormal2, Paquete{
+			Id:       orden.GetId(),
+			Track:    track,
+			Tipo:     orden.GetTipo(),
+			Intentos: 0,
+			Estado:   "En Bodega",
+		})
+		s.ListaTotalCola = append(s.ListaTotalCola, Paquete{
 			Id:       orden.GetId(),
 			Track:    track,
 			Tipo:     orden.GetTipo(),
@@ -142,8 +166,14 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 		s.CantidadNormal++
 	}
 	if orden.GetTipo() == "prioritario" {
-		s.ColaPrio = append(s.ColaPrio, Body)
 		s.ColaPrio2 = append(s.ColaPrio2, Paquete{
+			Id:       orden.GetId(),
+			Track:    track,
+			Tipo:     orden.GetTipo(),
+			Intentos: 0,
+			Estado:   "En Bodega",
+		})
+		s.ListaTotalCola = append(s.ListaTotalCola, Paquete{
 			Id:       orden.GetId(),
 			Track:    track,
 			Tipo:     orden.GetTipo(),
@@ -208,6 +238,22 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 			s.ColaRetail2 = s.ColaRetail2[1:]
 		}
 
+	}
+
+	return &me, nil
+}
+
+func (s *Server) Recibir(ctx context.Context, message *Message) (*Message, error) {
+	registro := strings.Split(message.Body, "%")
+	//9000%encamino
+	track, es := registro[0], registro[1]
+	for i := len(s.ListaTotalCola) - 1; i >= 0; i-- {
+		if track == s.ListaTotalCola[i].GetTrack() {
+			s.ListaTotalCola[i].Estado = es
+		}
+	}
+	me := Message{
+		Body: "",
 	}
 
 	return &me, nil

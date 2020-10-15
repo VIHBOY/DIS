@@ -109,9 +109,11 @@ func main() {
 			}
 		}
 		if strings.Compare("3", text) == 0 {
-			fmt.Println("hello, Yourself")
+			text2, _ := reader.ReadString('\n')
+			// convert CRLF to LF
+			text2 = strings.Replace(text2, "\r\n", "", -1)
 			message := chat.Message{
-				Body: "%",
+				Body: text2,
 			}
 			response, _ := c.Consultar(context.Background(), &message)
 			log.Printf("Su codigo de tracking es %s", response.Body)

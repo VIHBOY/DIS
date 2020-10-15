@@ -264,7 +264,7 @@ var file_chat_proto_rawDesc = []byte{
 	0x65, 0x6e, 0x74, 0x6f, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x65, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x18,
 	0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x65, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x22, 0x1d, 0x0a,
 	0x07, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x62, 0x6f, 0x64, 0x79,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x32, 0xee, 0x01, 0x0a,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x32, 0x9f, 0x02, 0x0a,
 	0x0b, 0x43, 0x68, 0x61, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2d, 0x0a, 0x0b,
 	0x4d, 0x61, 0x6e, 0x64, 0x61, 0x72, 0x4f, 0x72, 0x64, 0x65, 0x6e, 0x12, 0x0d, 0x2e, 0x63, 0x68,
 	0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x0d, 0x2e, 0x63, 0x68, 0x61,
@@ -279,8 +279,11 @@ var file_chat_proto_rawDesc = []byte{
 	0x1a, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22,
 	0x00, 0x12, 0x2a, 0x0a, 0x08, 0x52, 0x65, 0x63, 0x69, 0x62, 0x69, 0x72, 0x32, 0x12, 0x0d, 0x2e,
 	0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x0d, 0x2e, 0x63,
-	0x68, 0x61, 0x74, 0x2e, 0x50, 0x61, 0x71, 0x75, 0x65, 0x74, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x68, 0x61, 0x74, 0x2e, 0x50, 0x61, 0x71, 0x75, 0x65, 0x74, 0x65, 0x22, 0x00, 0x12, 0x2f, 0x0a,
+	0x0d, 0x43, 0x61, 0x6d, 0x62, 0x69, 0x61, 0x72, 0x45, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x12, 0x0d,
+	0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x0d, 0x2e,
+	0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -307,13 +310,15 @@ var file_chat_proto_depIdxs = []int32{
 	0, // 2: chat.ChatService.MandarOrden2:input_type -> chat.Orden
 	2, // 3: chat.ChatService.Recibir:input_type -> chat.Message
 	2, // 4: chat.ChatService.Recibir2:input_type -> chat.Message
-	2, // 5: chat.ChatService.MandarOrden:output_type -> chat.Message
-	2, // 6: chat.ChatService.Consultar:output_type -> chat.Message
-	2, // 7: chat.ChatService.MandarOrden2:output_type -> chat.Message
-	2, // 8: chat.ChatService.Recibir:output_type -> chat.Message
-	1, // 9: chat.ChatService.Recibir2:output_type -> chat.Paquete
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
+	2, // 5: chat.ChatService.CambiarEstado:input_type -> chat.Message
+	2, // 6: chat.ChatService.MandarOrden:output_type -> chat.Message
+	2, // 7: chat.ChatService.Consultar:output_type -> chat.Message
+	2, // 8: chat.ChatService.MandarOrden2:output_type -> chat.Message
+	2, // 9: chat.ChatService.Recibir:output_type -> chat.Message
+	1, // 10: chat.ChatService.Recibir2:output_type -> chat.Paquete
+	2, // 11: chat.ChatService.CambiarEstado:output_type -> chat.Message
+	6, // [6:12] is the sub-list for method output_type
+	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -399,6 +404,7 @@ type ChatServiceClient interface {
 	MandarOrden2(ctx context.Context, in *Orden, opts ...grpc.CallOption) (*Message, error)
 	Recibir(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
 	Recibir2(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Paquete, error)
+	CambiarEstado(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
 }
 
 type chatServiceClient struct {
@@ -454,6 +460,15 @@ func (c *chatServiceClient) Recibir2(ctx context.Context, in *Message, opts ...g
 	return out, nil
 }
 
+func (c *chatServiceClient) CambiarEstado(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
+	err := c.cc.Invoke(ctx, "/chat.ChatService/CambiarEstado", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatServiceServer is the server API for ChatService service.
 type ChatServiceServer interface {
 	MandarOrden(context.Context, *Message) (*Message, error)
@@ -461,6 +476,7 @@ type ChatServiceServer interface {
 	MandarOrden2(context.Context, *Orden) (*Message, error)
 	Recibir(context.Context, *Message) (*Message, error)
 	Recibir2(context.Context, *Message) (*Paquete, error)
+	CambiarEstado(context.Context, *Message) (*Message, error)
 }
 
 // UnimplementedChatServiceServer can be embedded to have forward compatible implementations.
@@ -481,6 +497,9 @@ func (*UnimplementedChatServiceServer) Recibir(context.Context, *Message) (*Mess
 }
 func (*UnimplementedChatServiceServer) Recibir2(context.Context, *Message) (*Paquete, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Recibir2 not implemented")
+}
+func (*UnimplementedChatServiceServer) CambiarEstado(context.Context, *Message) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CambiarEstado not implemented")
 }
 
 func RegisterChatServiceServer(s *grpc.Server, srv ChatServiceServer) {
@@ -577,6 +596,24 @@ func _ChatService_Recibir2_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatService_CambiarEstado_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Message)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServiceServer).CambiarEstado(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.ChatService/CambiarEstado",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServiceServer).CambiarEstado(ctx, req.(*Message))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ChatService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.ChatService",
 	HandlerType: (*ChatServiceServer)(nil),
@@ -600,6 +637,10 @@ var _ChatService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Recibir2",
 			Handler:    _ChatService_Recibir2_Handler,
+		},
+		{
+			MethodName: "CambiarEstado",
+			Handler:    _ChatService_CambiarEstado_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

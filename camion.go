@@ -14,8 +14,8 @@ import (
 
 type Camion struct {
 	Nombre      string
-	Paquete1    chat.Paquete
-	Paquete2    chat.Paquete
+	Paquete1    *chat.Paquete
+	Paquete2    *chat.Paquete
 	LleveRetail string
 }
 
@@ -29,20 +29,10 @@ func Send(camion Camion) {
 	}
 	p1, _ := c.Recibir2(context.Background(), &message)
 	p2, _ := c.Recibir2(context.Background(), &message)
-	camion.Paquete1 = chat.Paquete{
-		Id:       p1.GetId(),
-		Track:    p1.GetTrack(),
-		Tipo:     p1.GetTipo(),
-		Intentos: p1.GetIntentos(),
-		Estado:   p1.GetEstado(),
-	}
-	camion.Paquete2 = chat.Paquete{
-		Id:       p2.GetId(),
-		Track:    p2.GetTrack(),
-		Tipo:     p2.GetTipo(),
-		Intentos: p2.GetIntentos(),
-		Estado:   p2.GetEstado(),
-	}
+	camion.Paquete1 = p1
+	camion.Paquete2 = p2
+	fmt.Println(camion.Paquete1.GetId())
+	fmt.Println(camion.Paquete2.GetId())
 
 }
 func main() {
