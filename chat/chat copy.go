@@ -219,6 +219,7 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 				Intentos: s.ColaRetail2[0].GetIntentos(),
 				Estado:   s.ColaRetail2[0].GetEstado(),
 			}
+<<<<<<< Updated upstream
 			if len(s.ColaRetail2) == 1 {
 				s.ColaRetail2 = make([]Paquete, 0)
 			} else {
@@ -233,6 +234,13 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 				Intentos: 0,
 				Estado:   "NOHAY",
 			}
+=======
+			s.ColaRetail2[0]
+			me = s.ColaRetail2[0]
+
+			s.Retail++
+			s.ColaRetail2 = s.ColaRetail2[1:]
+>>>>>>> Stashed changes
 		}
 
 	}
