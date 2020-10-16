@@ -116,7 +116,7 @@ func main() {
 				Body: text2,
 			}
 			response, _ := c.Consultar(context.Background(), &message)
-			log.Printf("Su codigo de tracking es %s", response.Body)
+			log.Printf("El estado de su producto es: %s", response.Body)
 		}
 
 		if strings.Compare("exit", text) == 0 {

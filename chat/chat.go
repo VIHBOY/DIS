@@ -32,7 +32,6 @@ type Server struct {
 }
 
 type Paquete2 struct {
-	mux      sync.Mutex
 	PaqueteR Paquete
 }
 
@@ -85,6 +84,10 @@ func (s *Server) Consultar(ctx context.Context, message *Message) (*Message, err
 	for i := len(s.ListaTotalCola) - 1; i >= 0; i-- {
 		if x3 == s.ListaTotalCola[i].GetTrack() {
 			log.Println(s.ListaTotalCola[i].GetEstado())
+			me = Message{
+				Body: s.ListaTotalCola[i].GetEstado(),
+			}
+			break
 		}
 	}
 
@@ -126,6 +129,16 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 			Estado:   "En Bodega",
 		})
 		s.CantidadRetail++
+		Paquete2Mu := Paquete2{}
+		Paquete2Mu.PaqueteR = Paquete{
+			Id:       orden.GetId(),
+			Track:    track,
+			Tipo:     orden.GetTipo(),
+			Valor:    int32(val),
+			Intentos: 0,
+			Estado:   "En Bodega",
+		}
+
 	}
 	if orden.GetTipo() == "normal" {
 		s.ColaNormal2 = append(s.ColaNormal2, Paquete{
@@ -209,6 +222,7 @@ func remove2(slice []Paquete, s int) []Paquete {
 }
 func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, error) {
 	var me Paquete
+	var can sync.Mutex
 	if message.GetBody() == "Retail" {
 		if len(s.ColaRetail2) > 0 {
 			me = Paquete{
@@ -224,6 +238,7 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 			} else {
 				s.ColaRetail2 = s.ColaRetail2[1:]
 			}
+			can.Unlock()
 		} else {
 			me = Paquete{
 				Id:       "NOHAY",
@@ -236,7 +251,6 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 		}
 
 	}
-
 	return &me, nil
 }
 
