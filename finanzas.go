@@ -1,10 +1,29 @@
 package main
 
 import (
+	"bufio"
+	"encoding/json"
+	"fmt"
 	"log"
+	"os"
+	"strings"
 
 	"github.com/streadway/amqp"
 )
+
+type response2 struct {
+	id       string `json:"id"`
+	track    string `json:"track"`
+	tipo     string `json:"tipo"`
+	valor    string `json:"valor"`
+	intentos int    `json:"intentos"`
+	estado   string `json:"estado"`
+}
+
+type response3 struct {
+	Page   int      `json:"page"`
+	Fruits []string `json:"fruits"`
+}
 
 func failOnError(err error, msg string) {
 	if err != nil {
@@ -42,14 +61,35 @@ func main() {
 	)
 	failOnError(err, "Failed to register a consumer")
 
-	forever := make(chan bool)
-
 	go func() {
 		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
+			res := response2{}
+			str := `{"id":"1", "track":"1000", "tipo":"Polera", "valor":"90", "intentos": 3, "estado":"Entregado"}`
+			json.Unmarshal([]byte(str), &res)
+			fmt.Println(res)
+			log.Printf("Tipo: %s", d.Body)
 		}
 	}()
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	<-forever
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Println("Menú")
+		fmt.Println("---------------------")
+		fmt.Print("1. Consultar estado \n")
+		fmt.Print("2. Salir \n")
+		text, _ := reader.ReadString('\n')
+		// convert CRLF to LF
+		text = strings.Replace(text, "\r\n", "", -1)
+		if strings.Compare("1", text) == 0 {
+
+		}
+
+		if strings.Compare("2", text) == 0 {
+			break
+		}
+
+	}
+
 }
