@@ -15,7 +15,7 @@ type response2 struct {
 	Id       string `json:"id"`
 	Track    string `json:"track"`
 	Tipo     string `json:"tipo"`
-	Valor    string `json:"valor"`
+	Valor    int    `json:"valor"`
 	Intentos int    `json:"intentos"`
 	Estado   string `json:"estado"`
 }
@@ -61,7 +61,7 @@ func main() {
 			res := response2{}
 			str := d.Body
 			json.Unmarshal([]byte(str), &res)
-			fmt.Println(res.Tipo)
+			fmt.Println(res)
 			log.Printf("Tipo: %s", d.Body)
 		}
 	}()

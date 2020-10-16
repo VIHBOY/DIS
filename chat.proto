@@ -30,4 +30,5 @@ service ChatService{
 	rpc Recibir(Message) returns (Message){}
 	rpc Recibir2(Message) returns (Paquete){}
 	rpc CambiarEstado(Message) returns (Message){}
+    rpc CambiarIntentos(Message) returns (Message){}
 }

@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"time"
 
@@ -37,6 +38,25 @@ func Send(camion Camion) {
 		Body: camion.Paquete1.GetTrack() + "%" + "En Camino",
 	}
 	c.CambiarEstado(context.Background(), &me)
+	if camion.Paquete1.GetValor() >= camion.Paquete2.GetValor() {
+		me := chat.Message{
+			Body: camion.Paquete1.GetTrack() + "%" + "En Camino",
+		}
+		c.CambiarIntentos(context.Background(), &me)
+		rand.Seed(time.Now().UnixNano())
+		prob := rand.Intn(6-1) + 1
+		if prob == 5 {
+			me := chat.Message{
+				Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+			}
+			c.CambiarEstado(context.Background(), &me)
+		} else {
+			me := chat.Message{
+				Body: camion.Paquete1.GetTrack() + "%" + "Recibido",
+			}
+			c.CambiarEstado(context.Background(), &me)
+		}
+	}
 }
 func main() {
 

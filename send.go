@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"math/rand"
+	"time"
 
 	"github.com/streadway/amqp"
 )
@@ -21,7 +24,7 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func MandarFinanzas(wea string) {
+func MandarFinanzas(pack string) {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
@@ -40,7 +43,7 @@ func MandarFinanzas(wea string) {
 	)
 	failOnError(err, "Failed to declare a queue")
 
-	body := wea
+	body := pack
 	err = ch.Publish(
 		"",     // exchange
 		q.Name, // routing key
@@ -55,5 +58,12 @@ func MandarFinanzas(wea string) {
 }
 
 func main() {
-	MandarFinanzas(`{"id":"1", "track":"1000", "tipo":"Polera", "valor":"90", "intentos": 3, "estado":"Entregado"}`)
+	rand.Seed(time.Now().UnixNano())
+	Id := "1"
+	Track := "1000"
+	Tipo := "Polera"
+	Valor := rand.Intn(6-1) + 1
+	Intentos := 3
+	Estado := "Recibido"
+	MandarFinanzas(fmt.Sprintf(`{"id":"%s", "track":"%s", "tipo":"%s", "valor":%d, "intentos":%d, "estado":"%s"}`, Id, Track, Tipo, Valor, Intentos, Estado))
 }
