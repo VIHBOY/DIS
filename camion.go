@@ -30,31 +30,35 @@ func Send(camion Camion) {
 	}
 	p1, _ := c.Recibir2(context.Background(), &message)
 	p2, _ := c.Recibir2(context.Background(), &message)
-	camion.Paquete1 = p1
-	camion.Paquete2 = p2
-	fmt.Println(camion.Paquete1.GetId())
-	fmt.Println(camion.Paquete2.GetId())
-	me := chat.Message{
-		Body: camion.Paquete1.GetTrack() + "%" + "En Camino",
-	}
-	c.CambiarEstado(context.Background(), &me)
-	if camion.Paquete1.GetValor() >= camion.Paquete2.GetValor() {
-		me := chat.Message{
-			Body: camion.Paquete1.GetTrack() + "%" + "En Camino",
-		}
-		c.CambiarIntentos(context.Background(), &me)
-		rand.Seed(time.Now().UnixNano())
-		prob := rand.Intn(6-1) + 1
-		if prob == 5 {
+	if p1.GetId() != "NOHAY" {
+		if p2.GetId() != "NOHAY" {
+			camion.Paquete1 = p1
+			camion.Paquete2 = p2
+			fmt.Println(camion.Paquete1.GetId())
+			fmt.Println(camion.Paquete2.GetId())
 			me := chat.Message{
-				Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+				Body: camion.Paquete1.GetTrack() + "%" + "En Camino",
 			}
 			c.CambiarEstado(context.Background(), &me)
-		} else {
-			me := chat.Message{
-				Body: camion.Paquete1.GetTrack() + "%" + "Recibido",
+			if camion.Paquete1.GetValor() >= camion.Paquete2.GetValor() {
+				me := chat.Message{
+					Body: camion.Paquete1.GetTrack() + "%" + "En Camino",
+				}
+				c.CambiarIntentos(context.Background(), &me)
+				rand.Seed(time.Now().UnixNano())
+				prob := rand.Intn(6-1) + 1
+				if prob == 5 {
+					me := chat.Message{
+						Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+					}
+					c.CambiarEstado(context.Background(), &me)
+				} else {
+					me := chat.Message{
+						Body: camion.Paquete1.GetTrack() + "%" + "Recibido",
+					}
+					c.CambiarEstado(context.Background(), &me)
+				}
 			}
-			c.CambiarEstado(context.Background(), &me)
 		}
 	}
 }

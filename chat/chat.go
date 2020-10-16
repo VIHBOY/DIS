@@ -211,7 +211,20 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 				Intentos: s.ColaRetail2[0].GetIntentos(),
 				Estado:   s.ColaRetail2[0].GetEstado(),
 			}
-			s.ColaRetail2 = s.ColaRetail2[1:]
+			if len(s.ColaRetail2) == 1 {
+				s.ColaRetail2 = make([]Paquete, 0)
+			} else {
+				s.ColaRetail2 = s.ColaRetail2[1:]
+			}
+		} else {
+			me = Paquete{
+				Id:       "NOHAY",
+				Track:    "NOHAY",
+				Tipo:     "NOHAY",
+				Valor:    0,
+				Intentos: 0,
+				Estado:   "NOHAY",
+			}
 		}
 
 	}
