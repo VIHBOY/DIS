@@ -12,17 +12,12 @@ import (
 )
 
 type response2 struct {
-	id       string `json:"id"`
-	track    string `json:"track"`
-	tipo     string `json:"tipo"`
-	valor    string `json:"valor"`
-	intentos int    `json:"intentos"`
-	estado   string `json:"estado"`
-}
-
-type response3 struct {
-	Page   int      `json:"page"`
-	Fruits []string `json:"fruits"`
+	Id       string `json:"id"`
+	Track    string `json:"track"`
+	Tipo     string `json:"tipo"`
+	Valor    string `json:"valor"`
+	Intentos int    `json:"intentos"`
+	Estado   string `json:"estado"`
 }
 
 func failOnError(err error, msg string) {
@@ -64,9 +59,9 @@ func main() {
 	go func() {
 		for d := range msgs {
 			res := response2{}
-			str := `{"id":"1", "track":"1000", "tipo":"Polera", "valor":"90", "intentos": 3, "estado":"Entregado"}`
+			str := d.Body
 			json.Unmarshal([]byte(str), &res)
-			fmt.Println(res)
+			fmt.Println(res.Tipo)
 			log.Printf("Tipo: %s", d.Body)
 		}
 	}()
