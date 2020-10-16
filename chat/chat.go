@@ -8,7 +8,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	sync "sync"
 	"time"
 
 	"github.com/streadway/amqp"
@@ -222,7 +221,6 @@ func remove2(slice []Paquete, s int) []Paquete {
 }
 func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, error) {
 	var me Paquete
-	var can sync.Mutex
 	if message.GetBody() == "Retail" {
 		if len(s.ColaRetail2) > 0 {
 			me = Paquete{
@@ -238,7 +236,6 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 			} else {
 				s.ColaRetail2 = s.ColaRetail2[1:]
 			}
-			can.Unlock()
 		} else {
 			me = Paquete{
 				Id:       "NOHAY",
