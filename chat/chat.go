@@ -238,6 +238,100 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 		}
 
 	}
+
+	if message.GetBody() == "Normal" {
+		if len(s.ColaPrio2) > 0 {
+
+			me = Paquete{
+				Id:       s.ColaPrio2[0].GetId(),
+				Track:    s.ColaPrio2[0].GetTrack(),
+				Tipo:     s.ColaPrio2[0].GetTipo(),
+				Valor:    s.ColaPrio2[0].GetValor(),
+				Intentos: s.ColaPrio2[0].GetIntentos(),
+				Estado:   s.ColaPrio2[0].GetEstado(),
+			}
+			if len(s.ColaPrio2) == 1 {
+				s.ColaPrio2 = make([]Paquete, 0)
+			} else {
+				s.ColaPrio2 = s.ColaPrio2[1:]
+			}
+		} else {
+			if len(s.ColaNormal2) > 0 {
+
+				me = Paquete{
+					Id:       s.ColaNormal2[0].GetId(),
+					Track:    s.ColaNormal2[0].GetTrack(),
+					Tipo:     s.ColaNormal2[0].GetTipo(),
+					Valor:    s.ColaNormal2[0].GetValor(),
+					Intentos: s.ColaNormal2[0].GetIntentos(),
+					Estado:   s.ColaNormal2[0].GetEstado(),
+				}
+				if len(s.ColaNormal2) == 1 {
+					s.ColaNormal2 = make([]Paquete, 0)
+				} else {
+					s.ColaNormal2 = s.ColaNormal2[1:]
+				}
+			} else {
+				me = Paquete{
+					Id:       "NOHAY",
+					Track:    "NOHAY",
+					Tipo:     "NOHAY",
+					Valor:    0,
+					Intentos: 0,
+					Estado:   "NOHAY",
+				}
+			}
+
+		}
+
+	}
+
+	if message.GetBody() == "RetailPrio" {
+		if len(s.ColaPrio2) > 0 {
+
+			me = Paquete{
+				Id:       s.ColaPrio2[0].GetId(),
+				Track:    s.ColaPrio2[0].GetTrack(),
+				Tipo:     s.ColaPrio2[0].GetTipo(),
+				Valor:    s.ColaPrio2[0].GetValor(),
+				Intentos: s.ColaPrio2[0].GetIntentos(),
+				Estado:   s.ColaPrio2[0].GetEstado(),
+			}
+			if len(s.ColaPrio2) == 1 {
+				s.ColaPrio2 = make([]Paquete, 0)
+			} else {
+				s.ColaPrio2 = s.ColaPrio2[1:]
+			}
+		} else {
+			if len(s.ColaRetail2) > 0 {
+
+				me = Paquete{
+					Id:       s.ColaRetail2[0].GetId(),
+					Track:    s.ColaRetail2[0].GetTrack(),
+					Tipo:     s.ColaRetail2[0].GetTipo(),
+					Valor:    s.ColaRetail2[0].GetValor(),
+					Intentos: s.ColaRetail2[0].GetIntentos(),
+					Estado:   s.ColaRetail2[0].GetEstado(),
+				}
+				if len(s.ColaRetail2) == 1 {
+					s.ColaRetail2 = make([]Paquete, 0)
+				} else {
+					s.ColaRetail2 = s.ColaRetail2[1:]
+				}
+			} else {
+				me = Paquete{
+					Id:       "NOHAY",
+					Track:    "NOHAY",
+					Tipo:     "NOHAY",
+					Valor:    0,
+					Intentos: 0,
+					Estado:   "NOHAY",
+				}
+			}
+		}
+
+	}
+
 	s.mux.Unlock()
 	return &me, nil
 }

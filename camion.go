@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"sync"
 	"time"
 
 	"github.com/VIHBOY/DIS/chat"
@@ -74,14 +73,11 @@ func Send(camion Camion, tespera int, tenvio int) {
 	message := chat.Message{
 		Body: camion.Nombre,
 	}
-	var can sync.Mutex
-	can.Lock()
 	p1, _ := c.Recibir2(context.Background(), &message)
-	can.Unlock()
-	can.Lock()
 	p2, _ := c.Recibir2(context.Background(), &message)
-	can.Unlock()
 
+	log.Printf("Antes Camion %d recibio %s,", camion.id, p1.GetId())
+	log.Printf("Antes Camion %d recibio %s,", camion.id, p2.GetId())
 	if p1.GetId() != "NOHAY" {
 		if p2.GetId() != "NOHAY" {
 			camion.Paquete1 = p1
@@ -89,21 +85,29 @@ func Send(camion Camion, tespera int, tenvio int) {
 			log.Printf("Camion %d recibio %s,", camion.id, camion.Paquete1.GetId())
 			log.Printf("Camion %d recibio %s,", camion.id, camion.Paquete2.GetId())
 			if camion.Paquete1.GetValor() >= camion.Paquete2.GetValor() {
+				time.Sleep(time.Duration(tenvio) * time.Second)
 				EnviarPaquete(&camion, c, 1)
 				/////////////////////////////////
+				time.Sleep(time.Duration(tenvio) * time.Second)
 				EnviarPaquete(&camion, c, 2)
 
 				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
+					time.Sleep(time.Duration(tenvio) * time.Second)
 					EnviarPaquete(&camion, c, 1)
 				}
 				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
+					time.Sleep(time.Duration(tenvio) * time.Second)
 					EnviarPaquete(&camion, c, 2)
 				}
 
 				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
+					time.Sleep(time.Duration(tenvio) * time.Second)
+
 					EnviarPaquete(&camion, c, 1)
 				}
 				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
+					time.Sleep(time.Duration(tenvio) * time.Second)
+
 					EnviarPaquete(&camion, c, 2)
 				}
 
@@ -124,23 +128,35 @@ func Send(camion Camion, tespera int, tenvio int) {
 					log.Printf("%d", camion.Paquete2.Intentos)
 					c.CambiarEstado(context.Background(), &me3)
 				}
+
 			} else {
+				time.Sleep(time.Duration(tenvio) * time.Second)
 				EnviarPaquete(&camion, c, 2)
 				/////////////////////////////////
+				time.Sleep(time.Duration(tenvio) * time.Second)
+
 				EnviarPaquete(&camion, c, 1)
 
 				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
+					time.Sleep(time.Duration(tenvio) * time.Second)
+
 					EnviarPaquete(&camion, c, 2)
 				}
 
 				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
+					time.Sleep(time.Duration(tenvio) * time.Second)
+
 					EnviarPaquete(&camion, c, 1)
 				}
 				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
+					time.Sleep(time.Duration(tenvio) * time.Second)
+
 					EnviarPaquete(&camion, c, 2)
 				}
 
 				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
+					time.Sleep(time.Duration(tenvio) * time.Second)
+
 					EnviarPaquete(&camion, c, 1)
 				}
 				////////////////////
@@ -164,10 +180,28 @@ func Send(camion Camion, tespera int, tenvio int) {
 			}
 		} else {
 			camion.Paquete1 = p1
-			log.Printf("Camion %d recibio %d,", camion.id, camion.Paquete1.GetId())
-			can.Lock()
+			log.Printf("Camion %d recibio %s,", camion.id, camion.Paquete1.GetId())
+			time.Sleep(time.Duration(tenvio) * time.Second)
+
 			EnviarPaquete(&camion, c, 1)
-			can.Unlock()
+			if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
+				time.Sleep(time.Duration(tenvio) * time.Second)
+
+				EnviarPaquete(&camion, c, 1)
+			}
+			if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
+				time.Sleep(time.Duration(tenvio) * time.Second)
+
+				EnviarPaquete(&camion, c, 1)
+			}
+			if camion.Paquete1.Intentos == 3 && camion.Paquete1.GetEstado() == "En Camino" {
+				me3 := chat.Message{
+					Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+				}
+				camion.Paquete1.Estado = "No Recibido"
+				log.Printf("%d", camion.Paquete1.Intentos)
+				c.CambiarEstado(context.Background(), &me3)
+			}
 		}
 	}
 }
@@ -180,6 +214,10 @@ func main() {
 	CamionRetail2 := Camion{
 		id:     2,
 		Nombre: "Retail",
+	}
+	CamionNormal := Camion{
+		id:     3,
+		Nombre: "Normal",
 	}
 	var i2 int
 	var i int
@@ -195,15 +233,12 @@ func main() {
 	if err2 != nil {
 		fmt.Println(err2)
 	}
-	var can sync.Mutex
 	for {
-		time.Sleep((5) * time.Second)
-		can.Lock()
-		go Send(CamionRetail1, i, i)
-		can.Unlock()
-		can.Lock()
-		go Send(CamionRetail2, i, i)
-		can.Unlock()
+		time.Sleep((1) * time.Second)
+
+		go Send(CamionRetail1, i, i2)
+		go Send(CamionRetail2, i, i2)
+		go Send(CamionNormal, i, i2)
 	}
 
 }
