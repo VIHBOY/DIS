@@ -1,12 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"log"
 	"math/rand"
-	"os"
 	"sync"
 	"time"
 
@@ -22,43 +20,46 @@ type Camion struct {
 	LleveRetail string
 }
 
-func EnviarPaquete(camion Camion, c chat.ChatServiceClient, np int) {
+func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 	rand.Seed(time.Now().UnixNano())
 	prob := rand.Intn(6-1) + 1
 
 	if np == 1 {
 		if prob == 5 {
 			me3 := chat.Message{
-				Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+				Body: camion.Paquete1.GetTrack() + "%" + "En Camino",
 			}
+			camion.Paquete1.Estado = "En Camino"
 			camion.Paquete1.Intentos++
-			camion.Paquete1.Estado = "No Recibido"
+			log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete1.Id, camion.Paquete1.Intentos)
 			c.CambiarEstado(context.Background(), &me3)
-			c.CambiarIntentos(context.Background(), &me3)
+
 		} else {
 			me3 := chat.Message{
 				Body: camion.Paquete1.GetTrack() + "%" + "Recibido",
 			}
-			camion.Paquete1.Intentos++
 			camion.Paquete1.Estado = "Recibido"
+			camion.Paquete1.Intentos++
+			log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete1.Id, camion.Paquete1.Intentos)
 			c.CambiarEstado(context.Background(), &me3)
-			c.CambiarIntentos(context.Background(), &me3)
 		}
 	}
 	if np == 2 {
 		if prob == 5 {
 			me3 := chat.Message{
-				Body: camion.Paquete2.GetTrack() + "%" + "No Recibido",
+				Body: camion.Paquete2.GetTrack() + "%" + "En Camino",
 			}
+			camion.Paquete2.Estado = "En Camino"
 			camion.Paquete2.Intentos++
-			camion.Paquete2.Estado = "No Recibido"
+			log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete2.Id, camion.Paquete2.Intentos)
 			c.CambiarEstado(context.Background(), &me3)
 		} else {
 			me3 := chat.Message{
 				Body: camion.Paquete2.GetTrack() + "%" + "Recibido",
 			}
-			camion.Paquete2.Intentos++
 			camion.Paquete2.Estado = "Recibido"
+			camion.Paquete2.Intentos++
+			log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete2.Id, camion.Paquete2.Intentos)
 			c.CambiarEstado(context.Background(), &me3)
 		}
 	}
@@ -66,7 +67,7 @@ func EnviarPaquete(camion Camion, c chat.ChatServiceClient, np int) {
 }
 
 //NewOrden is
-func Send(camion Camion) {
+func Send(camion Camion, tespera int, tenvio int) {
 	var conn *grpc.ClientConn
 	conn, _ = grpc.Dial(":9000", grpc.WithInsecure())
 	c := chat.NewChatServiceClient(conn)
@@ -85,42 +86,87 @@ func Send(camion Camion) {
 		if p2.GetId() != "NOHAY" {
 			camion.Paquete1 = p1
 			camion.Paquete2 = p2
-			fmt.Println("Camion %d recibio %d,", camion.id, camion.Paquete1.GetId())
-			fmt.Println("Camion %d recibio %d,", camion.id, camion.Paquete2.GetId())
-			me := chat.Message{
-				Body: camion.Paquete1.GetTrack() + "%" + "En Camino",
-			}
-			c.CambiarEstado(context.Background(), &me)
-			me = chat.Message{
-				Body: camion.Paquete2.GetTrack() + "%" + "En Camino",
-			}
-			c.CambiarEstado(context.Background(), &me)
+			log.Printf("Camion %d recibio %s,", camion.id, camion.Paquete1.GetId())
+			log.Printf("Camion %d recibio %s,", camion.id, camion.Paquete2.GetId())
 			if camion.Paquete1.GetValor() >= camion.Paquete2.GetValor() {
-				can.Lock()
-				EnviarPaquete(camion, c, 1)
-				can.Unlock()
+				EnviarPaquete(&camion, c, 1)
 				/////////////////////////////////
-				can.Lock()
-				EnviarPaquete(camion, c, 2)
-				can.Unlock()
+				EnviarPaquete(&camion, c, 2)
+
+				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
+					EnviarPaquete(&camion, c, 1)
+				}
+				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
+					EnviarPaquete(&camion, c, 2)
+				}
+
+				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
+					EnviarPaquete(&camion, c, 1)
+				}
+				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
+					EnviarPaquete(&camion, c, 2)
+				}
+
+				////////////////////////////////////
+				if camion.Paquete1.Intentos == 3 && camion.Paquete1.GetEstado() == "En Camino" {
+					me3 := chat.Message{
+						Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+					}
+					camion.Paquete1.Estado = "No Recibido"
+					log.Printf("%d", camion.Paquete1.Intentos)
+					c.CambiarEstado(context.Background(), &me3)
+				}
+				if camion.Paquete2.Intentos == 3 && camion.Paquete2.GetEstado() == "En Camino" {
+					me3 := chat.Message{
+						Body: camion.Paquete2.GetTrack() + "%" + "No Recibido",
+					}
+					camion.Paquete2.Estado = "No Recibido"
+					log.Printf("%d", camion.Paquete2.Intentos)
+					c.CambiarEstado(context.Background(), &me3)
+				}
 			} else {
-				can.Lock()
-				EnviarPaquete(camion, c, 2)
-				can.Unlock()
+				EnviarPaquete(&camion, c, 2)
 				/////////////////////////////////
-				can.Lock()
-				EnviarPaquete(camion, c, 1)
-				can.Unlock()
+				EnviarPaquete(&camion, c, 1)
+
+				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
+					EnviarPaquete(&camion, c, 2)
+				}
+
+				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
+					EnviarPaquete(&camion, c, 1)
+				}
+				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
+					EnviarPaquete(&camion, c, 2)
+				}
+
+				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
+					EnviarPaquete(&camion, c, 1)
+				}
+				////////////////////
+				if camion.Paquete1.Intentos == 3 && camion.Paquete1.GetEstado() == "En Camino" {
+					me3 := chat.Message{
+						Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+					}
+					camion.Paquete1.Estado = "No Recibido"
+					log.Printf("%d", camion.Paquete1.Intentos)
+					c.CambiarEstado(context.Background(), &me3)
+				}
+				if camion.Paquete2.Intentos == 3 && camion.Paquete2.GetEstado() == "En Camino" {
+					me3 := chat.Message{
+						Body: camion.Paquete2.GetTrack() + "%" + "No Recibido",
+					}
+					camion.Paquete2.Estado = "No Recibido"
+					log.Printf("%d", camion.Paquete2.Intentos)
+					c.CambiarEstado(context.Background(), &me3)
+				}
+
 			}
 		} else {
 			camion.Paquete1 = p1
-			fmt.Println("Camion %d recibio %d,", camion.id, camion.Paquete1.GetId())
-			me := chat.Message{
-				Body: camion.Paquete1.GetTrack() + "%" + "En Camino",
-			}
-			c.CambiarEstado(context.Background(), &me)
+			log.Printf("Camion %d recibio %d,", camion.id, camion.Paquete1.GetId())
 			can.Lock()
-			EnviarPaquete(camion, c, 1)
+			EnviarPaquete(&camion, c, 1)
 			can.Unlock()
 		}
 	}
@@ -135,24 +181,28 @@ func main() {
 		id:     2,
 		Nombre: "Retail",
 	}
+	var i2 int
+	var i int
 
-	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Ingrese Tiempo espera Camion")
-	tespera, _ := reader.ReadString('\n')
-	fmt.Println("Ingrese Tiempo de envio Paquete")
-	tenvio, _ := reader.ReadString('\n')
-	log.Printf("Tiempo espera Camion: %s", tespera)
-	log.Printf("Tiempo de envio Camion: %s", tenvio)
-	var can sync.Mutex
+	_, err := fmt.Scanf("%d\n", &i)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	var2 := time.Duration(5) * time.Second
+	fmt.Println("Ingrese Tiempo espera Camion")
+	_, err2 := fmt.Scanf("%d\n", &i2)
+	if err2 != nil {
+		fmt.Println(err2)
+	}
+	var can sync.Mutex
 	for {
-		time.Sleep(var2)
+		time.Sleep((5) * time.Second)
 		can.Lock()
-		go Send(CamionRetail1)
+		go Send(CamionRetail1, i, i)
 		can.Unlock()
 		can.Lock()
-		go Send(CamionRetail2)
+		go Send(CamionRetail2, i, i)
 		can.Unlock()
 	}
 

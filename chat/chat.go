@@ -8,12 +8,14 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	sync "sync"
 	"time"
 
 	"github.com/streadway/amqp"
 )
 
 type Server struct {
+	mux            sync.Mutex
 	Retail         int
 	Lista1         []string
 	ColaNormal     []string
@@ -27,11 +29,6 @@ type Server struct {
 	CantidadRetail int
 	Lista          []Orden
 	ListaTotalCola []Paquete
-	ListaMuRetail  []Paquete2
-}
-
-type Paquete2 struct {
-	PaqueteR Paquete
 }
 
 func failOnError(err error, msg string) {
@@ -128,15 +125,6 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 			Estado:   "En Bodega",
 		})
 		s.CantidadRetail++
-		Paquete2Mu := Paquete2{}
-		Paquete2Mu.PaqueteR = Paquete{
-			Id:       orden.GetId(),
-			Track:    track,
-			Tipo:     orden.GetTipo(),
-			Valor:    int32(val),
-			Intentos: 0,
-			Estado:   "En Bodega",
-		}
 
 	}
 	if orden.GetTipo() == "normal" {
@@ -221,8 +209,10 @@ func remove2(slice []Paquete, s int) []Paquete {
 }
 func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, error) {
 	var me Paquete
+	s.mux.Lock()
 	if message.GetBody() == "Retail" {
 		if len(s.ColaRetail2) > 0 {
+
 			me = Paquete{
 				Id:       s.ColaRetail2[0].GetId(),
 				Track:    s.ColaRetail2[0].GetTrack(),
@@ -248,6 +238,7 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 		}
 
 	}
+	s.mux.Unlock()
 	return &me, nil
 }
 
@@ -292,6 +283,7 @@ func (s *Server) CambiarEstado(ctx context.Context, message *Message) (*Message,
 	for i := len(s.ListaTotalCola) - 1; i >= 0; i-- {
 		if track == s.ListaTotalCola[i].GetTrack() {
 			s.ListaTotalCola[i].Estado = es
+			s.ListaTotalCola[i].Intentos++
 			found = i
 			break
 		}
@@ -302,7 +294,7 @@ func (s *Server) CambiarEstado(ctx context.Context, message *Message) (*Message,
 	}
 
 	if es == "No Recibido" {
-		MandarFinanzas(fmt.Sprintf(`{"id":"%s", "track":"%s", "tipo":"%s", "valor":%d, "intentos":%d, "estado":"%s"}`, s.ListaTotalCola[found].Id, s.ListaTotalCola[found].Track, s.ListaTotalCola[found].Tipo, s.ListaTotalCola[found].Valor, s.ListaTotalCola[found].Intentos, s.ListaTotalCola[found].Estado))
+		MandarFinanzas(fmt.Sprintf(`{"id":"%s", "track":"%s", "tipo":"%s", "valor":%d, "intentos":3, "estado":"%s"}`, s.ListaTotalCola[found].Id, s.ListaTotalCola[found].Track, s.ListaTotalCola[found].Tipo, s.ListaTotalCola[found].Valor, s.ListaTotalCola[found].Estado))
 	}
 
 	me := Message{
