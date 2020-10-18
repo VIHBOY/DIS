@@ -1,0 +1,8 @@
+BE127,BE127000,prioritario,15,1,Recibido,19.5,0.0,19.5
+BE666,BE666000,prioritario,8,1,No Recibido,2.4,0.0,2.4
+PF654,PF654000,prioritario,50,1,Recibido,65.0,0.0,65.0
+BE785,BE785000,prioritario,8,1,Recibido,10.4,0.0,10.4
+BE855,BE855000,normal,10,1,Recibido,10.0,0.0,10.0
+PF111,PF111000,prioritario,10,2,Recibido,13.0,10.0,3.0
+BE654,BE654000,normal,10,1,Recibido,10.0,0.0,10.0
+PF125,PF125000,normal,75,2,Recibido,75.0,10.0,65.0

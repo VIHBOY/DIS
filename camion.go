@@ -16,7 +16,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-//Camion is
+//Camion is a struct.
 type Camion struct {
 	mux           sync.Mutex
 	id            int
@@ -28,7 +28,7 @@ type Camion struct {
 	NombreArchivo string
 }
 
-//WriteData2 is
+//WriteData2 is a function.
 func WriteData2(name string, paquete *chat.Paquete, auxiliar *(chat.Message)) {
 	registro2 := strings.Split(auxiliar.Body, "%")
 	inicio, destino := registro2[0], registro2[1]
@@ -48,7 +48,7 @@ func WriteData2(name string, paquete *chat.Paquete, auxiliar *(chat.Message)) {
 	csvfile.Close()
 }
 
-//CreateFile is
+//CreateFile is a function.
 func CreateFile(name string) {
 
 	csvFile, err := os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -59,7 +59,7 @@ func CreateFile(name string) {
 	csvFile.Close()
 }
 
-//EnviarPaquete is
+//EnviarPaquete is a function.
 func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 	rand.Seed(time.Now().UnixNano())
 	prob := rand.Intn(6-1) + 1
@@ -109,7 +109,7 @@ func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 
 }
 
-//Send is
+//Send is a function.
 func Send(camion *Camion, tespera int, tenvio int) {
 	var conn *grpc.ClientConn
 	var me chat.Message

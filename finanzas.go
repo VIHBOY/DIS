@@ -13,6 +13,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
+//PackJSON is a struct.
 type PackJSON struct {
 	Id       string  `json:"id"`
 	Track    string  `json:"track"`

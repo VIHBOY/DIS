@@ -13,7 +13,7 @@ import (
 type Server struct {
 }
 
-//CreateFile is
+//CreateFile is a function. Recibo como parametro el nombre del archivo.
 func CreateFile(name string) {
 	csvFile, err := os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
@@ -24,6 +24,7 @@ func CreateFile(name string) {
 	csvFile.Close()
 }
 
+//Connect is a function.
 func connect(l net.Listener) {
 	s := chat.Server{}
 	grpcServer := grpc.NewServer()
