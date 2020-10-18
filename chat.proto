@@ -19,6 +19,14 @@ message Paquete  {
 	string estado = 6;
 }
 
+message Seguimiento  {
+    int32 idpaquete = 1;
+	string estado = 2;
+	int32 idcamion = 3;
+    int32 idseguimiento = 4;
+
+}
+
 message Message{
 	 string body = 1;
 }

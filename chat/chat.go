@@ -14,21 +14,23 @@ import (
 	"github.com/streadway/amqp"
 )
 
+//Server is
 type Server struct {
-	mux            sync.Mutex
-	Retail         int
-	Lista1         []string
-	ColaNormal     []string
-	ColaNormal2    []Paquete
-	ColaPrio2      []Paquete
-	ColaRetail2    []Paquete
-	CantidadNormal int
-	ColaPrio       []string
-	CantidadPrio   int
-	ColaRetail     []string
-	CantidadRetail int
-	Lista          []Orden
-	ListaTotalCola []Paquete
+	mux              sync.Mutex
+	Retail           int
+	Lista1           []string
+	ColaNormal       []string
+	ColaNormal2      []Paquete
+	ColaPrio2        []Paquete
+	ColaRetail2      []Paquete
+	CantidadNormal   int
+	ColaPrio         []string
+	CantidadPrio     int
+	ColaRetail       []string
+	CantidadRetail   int
+	Lista            []Orden
+	ListaTotalCola   []Paquete
+	ListaSeguimiento []Seguimiento
 }
 
 func failOnError(err error, msg string) {
@@ -98,6 +100,7 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 		Body: trackin,
 	}
 	track := orden.GetId() + "000"
+
 	WriteData(orden.GetTipo(), orden.GetId(), orden.GetProducto(), orden.GetValor(), orden.GetInicio(), orden.GetDestino())
 	s.Lista = append(s.Lista, Orden{
 		Id:       orden.GetId(),
@@ -124,6 +127,10 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 			Valor:    int32(val),
 			Intentos: 0,
 			Estado:   "En Bodega",
+		})
+		s.ListaSeguimiento = append(s.ListaSeguimiento, Seguimiento{
+			id_paquete: orden.GetId(),
+			Estado:     "En Bodega",
 		})
 		s.CantidadRetail++
 
@@ -173,6 +180,8 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 func remove(slice []string, s int) []string {
 	return append(slice[:s], slice[s+1:]...)
 }
+
+//Recibir is
 func (s *Server) Recibir(ctx context.Context, message *Message) (*Message, error) {
 	me := Message{
 		Body: "",
@@ -209,6 +218,8 @@ func (s *Server) Recibir(ctx context.Context, message *Message) (*Message, error
 func remove2(slice []Paquete, s int) []Paquete {
 	return append(slice[:s], slice[s+1:]...)
 }
+
+//Recibir2 is
 func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, error) {
 	var me Paquete
 	s.mux.Lock()
@@ -385,6 +396,7 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 	return &me, nil
 }
 
+//MandarFinanzas is
 func MandarFinanzas(pack string) {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
@@ -418,6 +430,7 @@ func MandarFinanzas(pack string) {
 	failOnError(err, "Failed to publish a message")
 }
 
+//CambiarEstado is
 func (s *Server) CambiarEstado(ctx context.Context, message *Message) (*Message, error) {
 	registro := strings.Split(message.Body, "%")
 	//9000%encamino
@@ -447,6 +460,7 @@ func (s *Server) CambiarEstado(ctx context.Context, message *Message) (*Message,
 	return &me, nil
 }
 
+//CambiarIntentos is
 func (s *Server) CambiarIntentos(ctx context.Context, message *Message) (*Message, error) {
 	registro := strings.Split(message.Body, "%")
 	//9000%encamino
@@ -465,6 +479,7 @@ func (s *Server) CambiarIntentos(ctx context.Context, message *Message) (*Messag
 	return &me, nil
 }
 
+//BuscarOrden is
 func (s *Server) BuscarOrden(ctx context.Context, message *Message) (*Message, error) {
 	x := message.GetBody()
 	var me Message

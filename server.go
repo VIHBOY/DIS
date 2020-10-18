@@ -34,7 +34,6 @@ func connect(l net.Listener) {
 }
 
 func main() {
-
 	CreateFile("dblogistica.csv")
 	lis, err := net.Listen("tcp", ":9000")
 	if err != nil {
