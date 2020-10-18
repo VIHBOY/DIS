@@ -113,7 +113,7 @@ func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 func Send(camion *Camion, tespera int, tenvio int) {
 	var conn *grpc.ClientConn
 	var me chat.Message
-	conn, _ = grpc.Dial("dist25:9000", grpc.WithInsecure())
+	conn, _ = grpc.Dial(":9000", grpc.WithInsecure())
 	c := chat.NewChatServiceClient(conn)
 	message := chat.Message{
 		Body: camion.Nombre,
