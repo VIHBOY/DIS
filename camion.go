@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/csv"
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
 	"time"
 
 	"github.com/VIHBOY/DIS/chat"
@@ -12,11 +14,41 @@ import (
 )
 
 type Camion struct {
-	id          int
-	Nombre      string
-	Paquete1    *chat.Paquete
-	Paquete2    *chat.Paquete
-	LleveRetail string
+	id            int
+	Nombre        string
+	Paquete1      *chat.Paquete
+	Paquete2      *chat.Paquete
+	LleveRetail   int
+	Deruta        int
+	NombreArchivo string
+}
+
+func WriteData2(name string, paquete chat.Paquete) {
+
+	t := time.Now()
+	timestamp := fmt.Sprintf("%02d-%02d-%d %02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute())
+	csvfile, err := os.OpenFile(name, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	registro := []string{timestamp, paquete.GetId(), paquete.GetTipo(), paquete.GetValor(), paquete.GetInicio(), paquete., destino}
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	csvwriter := csv.NewWriter(csvfile)
+
+	csvwriter.Write(registro)
+
+	csvwriter.Flush()
+	csvfile.Close()
+}
+
+func CreateFile(name string) {
+	csvFile, err := os.Create(name)
+
+	if err != nil {
+		log.Fatalf("failed creating file: %s", err)
+	}
+
+	csvFile.Close()
 }
 
 func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
@@ -66,49 +98,68 @@ func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 }
 
 //NewOrden is
-func Send(camion Camion, tespera int, tenvio int) {
+func Send(camion *Camion, tespera int, tenvio int) {
 	var conn *grpc.ClientConn
 	conn, _ = grpc.Dial(":9000", grpc.WithInsecure())
 	c := chat.NewChatServiceClient(conn)
 	message := chat.Message{
 		Body: camion.Nombre,
 	}
+	if camion.id == 1 || camion.id == 2 {
+		log.Printf("Prioridad: %d de ID: %d", camion.LleveRetail, camion.id)
+	}
+	if camion.id == 1 || camion.id == 2 {
+		if camion.LleveRetail == 1 {
+			log.Printf("Poto")
+			message = chat.Message{
+				Body: "RetailPrio",
+			}
+		}
+	}
 	p1, _ := c.Recibir2(context.Background(), &message)
+
+	if camion.id == 1 || camion.id == 2 {
+		if camion.LleveRetail == 1 {
+			log.Printf("Poto2")
+
+			message = chat.Message{
+				Body: "RetailPrio2",
+			}
+		}
+	}
 	p2, _ := c.Recibir2(context.Background(), &message)
 
-	log.Printf("Antes Camion %d recibio %s,", camion.id, p1.GetId())
-	log.Printf("Antes Camion %d recibio %s,", camion.id, p2.GetId())
 	if p1.GetId() != "NOHAY" {
 		if p2.GetId() != "NOHAY" {
 			camion.Paquete1 = p1
 			camion.Paquete2 = p2
-			log.Printf("Camion %d recibio %s,", camion.id, camion.Paquete1.GetId())
-			log.Printf("Camion %d recibio %s,", camion.id, camion.Paquete2.GetId())
+			log.Printf("Camion %d 1 recibio %s,", camion.id, camion.Paquete1.GetId())
+			log.Printf("Camion %d 2 recibio %s,", camion.id, camion.Paquete2.GetId())
 			if camion.Paquete1.GetValor() >= camion.Paquete2.GetValor() {
 				time.Sleep(time.Duration(tenvio) * time.Second)
-				EnviarPaquete(&camion, c, 1)
+				EnviarPaquete(camion, c, 1)
 				/////////////////////////////////
 				time.Sleep(time.Duration(tenvio) * time.Second)
-				EnviarPaquete(&camion, c, 2)
+				EnviarPaquete(camion, c, 2)
 
 				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
 					time.Sleep(time.Duration(tenvio) * time.Second)
-					EnviarPaquete(&camion, c, 1)
+					EnviarPaquete(camion, c, 1)
 				}
 				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
 					time.Sleep(time.Duration(tenvio) * time.Second)
-					EnviarPaquete(&camion, c, 2)
+					EnviarPaquete(camion, c, 2)
 				}
 
 				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
 					time.Sleep(time.Duration(tenvio) * time.Second)
 
-					EnviarPaquete(&camion, c, 1)
+					EnviarPaquete(camion, c, 1)
 				}
 				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
 					time.Sleep(time.Duration(tenvio) * time.Second)
 
-					EnviarPaquete(&camion, c, 2)
+					EnviarPaquete(camion, c, 2)
 				}
 
 				////////////////////////////////////
@@ -128,36 +179,43 @@ func Send(camion Camion, tespera int, tenvio int) {
 					log.Printf("%d", camion.Paquete2.Intentos)
 					c.CambiarEstado(context.Background(), &me3)
 				}
-
+				camion.Deruta = 0
+				if camion.Paquete1.GetTipo() == "retail" || camion.Paquete2.GetTipo() == "retail" {
+					camion.LleveRetail = 1
+				}
+				if camion.Paquete1.GetTipo() == "prioritario" && camion.Paquete2.GetTipo() == "prioritario" {
+					camion.LleveRetail = 0
+				}
+				WriteData2(camion.NombreArchivo, camion.Paquete1)
 			} else {
 				time.Sleep(time.Duration(tenvio) * time.Second)
-				EnviarPaquete(&camion, c, 2)
+				EnviarPaquete(camion, c, 2)
 				/////////////////////////////////
 				time.Sleep(time.Duration(tenvio) * time.Second)
 
-				EnviarPaquete(&camion, c, 1)
+				EnviarPaquete(camion, c, 1)
 
 				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
 					time.Sleep(time.Duration(tenvio) * time.Second)
 
-					EnviarPaquete(&camion, c, 2)
+					EnviarPaquete(camion, c, 2)
 				}
 
 				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
 					time.Sleep(time.Duration(tenvio) * time.Second)
 
-					EnviarPaquete(&camion, c, 1)
+					EnviarPaquete(camion, c, 1)
 				}
 				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
 					time.Sleep(time.Duration(tenvio) * time.Second)
 
-					EnviarPaquete(&camion, c, 2)
+					EnviarPaquete(camion, c, 2)
 				}
 
 				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
 					time.Sleep(time.Duration(tenvio) * time.Second)
 
-					EnviarPaquete(&camion, c, 1)
+					EnviarPaquete(camion, c, 1)
 				}
 				////////////////////
 				if camion.Paquete1.Intentos == 3 && camion.Paquete1.GetEstado() == "En Camino" {
@@ -176,23 +234,29 @@ func Send(camion Camion, tespera int, tenvio int) {
 					log.Printf("%d", camion.Paquete2.Intentos)
 					c.CambiarEstado(context.Background(), &me3)
 				}
-
+				camion.Deruta = 0
+				if camion.Paquete1.GetTipo() == "retail" || camion.Paquete2.GetTipo() == "retail" {
+					camion.LleveRetail = 1
+				}
+				if camion.Paquete1.GetTipo() == "prioritario" && camion.Paquete2.GetTipo() == "prioritario" {
+					camion.LleveRetail = 0
+				}
 			}
 		} else {
 			camion.Paquete1 = p1
 			log.Printf("Camion %d recibio %s,", camion.id, camion.Paquete1.GetId())
 			time.Sleep(time.Duration(tenvio) * time.Second)
 
-			EnviarPaquete(&camion, c, 1)
+			EnviarPaquete(camion, c, 1)
 			if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
 				time.Sleep(time.Duration(tenvio) * time.Second)
 
-				EnviarPaquete(&camion, c, 1)
+				EnviarPaquete(camion, c, 1)
 			}
 			if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
 				time.Sleep(time.Duration(tenvio) * time.Second)
 
-				EnviarPaquete(&camion, c, 1)
+				EnviarPaquete(camion, c, 1)
 			}
 			if camion.Paquete1.Intentos == 3 && camion.Paquete1.GetEstado() == "En Camino" {
 				me3 := chat.Message{
@@ -202,22 +266,43 @@ func Send(camion Camion, tespera int, tenvio int) {
 				log.Printf("%d", camion.Paquete1.Intentos)
 				c.CambiarEstado(context.Background(), &me3)
 			}
+			camion.Deruta = 0
+			if camion.Paquete1.GetTipo() == "retail" {
+				camion.LleveRetail = 1
+			}
+			if camion.Paquete1.GetTipo() == "prioritario" {
+				camion.LleveRetail = 0
+			}
 		}
+	} else {
+		camion.Deruta = 0
+
 	}
 }
-func main() {
 
+func main() {
+	CreateFile("CamionRetail1.csv")
+	CreateFile("CamionRetail2.csv")
+	CreateFile("CamionNormal.csv")
 	CamionRetail1 := Camion{
-		id:     1,
-		Nombre: "Retail",
+		id:            1,
+		Nombre:        "Retail",
+		Deruta:        0,
+		LleveRetail:   0,
+		NombreArchivo: "CamionRetail1.csv",
 	}
 	CamionRetail2 := Camion{
-		id:     2,
-		Nombre: "Retail",
+		id:            2,
+		Nombre:        "Retail",
+		Deruta:        0,
+		LleveRetail:   0,
+		NombreArchivo: "CamionRetail2.csv",
 	}
 	CamionNormal := Camion{
-		id:     3,
-		Nombre: "Normal",
+		id:            3,
+		Nombre:        "Normal",
+		Deruta:        0,
+		NombreArchivo: "CamionNormal.csv",
 	}
 	var i2 int
 	var i int
@@ -235,10 +320,22 @@ func main() {
 	}
 	for {
 		time.Sleep((1) * time.Second)
+		if CamionRetail1.Deruta == 0 {
+			CamionRetail1.Deruta = 1
+			go Send(&CamionRetail1, i, i2)
 
-		go Send(CamionRetail1, i, i2)
-		go Send(CamionRetail2, i, i2)
-		go Send(CamionNormal, i, i2)
+		}
+		if CamionRetail2.Deruta == 0 {
+			CamionRetail2.Deruta = 1
+			go Send(&CamionRetail2, i, i2)
+
+		}
+		/*if CamionNormal.Deruta == 0 {
+			CamionNormal.Deruta = 1
+			go Send(&CamionNormal, i, i2)
+
+		}*/
+
 	}
 
 }

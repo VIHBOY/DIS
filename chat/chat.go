@@ -92,6 +92,7 @@ func (s *Server) Consultar(ctx context.Context, message *Message) (*Message, err
 
 //MandarOrden2 is
 func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, error) {
+	s.mux.Lock()
 	trackin := orden.GetId() + "000" + " Para el producto: " + orden.GetId()
 	me := Message{
 		Body: trackin,
@@ -165,6 +166,7 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 		})
 		s.CantidadPrio++
 	}
+	s.mux.Unlock()
 	return &me, nil
 }
 
@@ -287,8 +289,55 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 	}
 
 	if message.GetBody() == "RetailPrio" {
-		if len(s.ColaPrio2) > 0 {
+		if len(s.ColaRetail2) > 0 {
+			log.Printf("Entre a RetailPrio2 en Prio")
 
+			me = Paquete{
+				Id:       s.ColaRetail2[0].GetId(),
+				Track:    s.ColaRetail2[0].GetTrack(),
+				Tipo:     s.ColaRetail2[0].GetTipo(),
+				Valor:    s.ColaRetail2[0].GetValor(),
+				Intentos: s.ColaRetail2[0].GetIntentos(),
+				Estado:   s.ColaRetail2[0].GetEstado(),
+			}
+			if len(s.ColaRetail2) == 1 {
+				s.ColaRetail2 = make([]Paquete, 0)
+			} else {
+				s.ColaRetail2 = s.ColaRetail2[1:]
+			}
+		} else {
+			if len(s.ColaPrio2) > 0 {
+
+				me = Paquete{
+					Id:       s.ColaPrio2[0].GetId(),
+					Track:    s.ColaPrio2[0].GetTrack(),
+					Tipo:     s.ColaPrio2[0].GetTipo(),
+					Valor:    s.ColaPrio2[0].GetValor(),
+					Intentos: s.ColaPrio2[0].GetIntentos(),
+					Estado:   s.ColaPrio2[0].GetEstado(),
+				}
+				if len(s.ColaPrio2) == 1 {
+					s.ColaPrio2 = make([]Paquete, 0)
+				} else {
+					s.ColaPrio2 = s.ColaPrio2[1:]
+				}
+			} else {
+				me = Paquete{
+					Id:       "NOHAY",
+					Track:    "NOHAY",
+					Tipo:     "NOHAY",
+					Valor:    0,
+					Intentos: 0,
+					Estado:   "NOHAY",
+				}
+			}
+		}
+
+	}
+
+	if message.GetBody() == "RetailPrio2" {
+		if len(s.ColaPrio2) > 0 {
+			log.Printf("Entre a RetailPrio2 en Prio")
 			me = Paquete{
 				Id:       s.ColaPrio2[0].GetId(),
 				Track:    s.ColaPrio2[0].GetTrack(),
@@ -373,24 +422,24 @@ func (s *Server) CambiarEstado(ctx context.Context, message *Message) (*Message,
 	registro := strings.Split(message.Body, "%")
 	//9000%encamino
 	track, es := registro[0], registro[1]
-	found := 0
+	//found := 0
 	for i := len(s.ListaTotalCola) - 1; i >= 0; i-- {
 		if track == s.ListaTotalCola[i].GetTrack() {
 			s.ListaTotalCola[i].Estado = es
 			s.ListaTotalCola[i].Intentos++
-			found = i
+			//found = i
 			break
 		}
 	}
 
-	if es == "Recibido" {
+	/*if es == "Recibido" {
 		MandarFinanzas(fmt.Sprintf(`{"id":"%s", "track":"%s", "tipo":"%s", "valor":%d, "intentos":%d, "estado":"%s"}`, s.ListaTotalCola[found].Id, s.ListaTotalCola[found].Track, s.ListaTotalCola[found].Tipo, s.ListaTotalCola[found].Valor, s.ListaTotalCola[found].Intentos, s.ListaTotalCola[found].Estado))
 	}
 
 	if es == "No Recibido" {
 		MandarFinanzas(fmt.Sprintf(`{"id":"%s", "track":"%s", "tipo":"%s", "valor":%d, "intentos":3, "estado":"%s"}`, s.ListaTotalCola[found].Id, s.ListaTotalCola[found].Track, s.ListaTotalCola[found].Tipo, s.ListaTotalCola[found].Valor, s.ListaTotalCola[found].Estado))
 	}
-
+	*/
 	me := Message{
 		Body: "",
 	}
@@ -411,6 +460,24 @@ func (s *Server) CambiarIntentos(ctx context.Context, message *Message) (*Messag
 
 	me := Message{
 		Body: "",
+	}
+
+	return &me, nil
+}
+
+func (s *Server) BuscarOrden(ctx context.Context, message *Message) (*Message, error) {
+	x := message.GetBody()
+	var me Message
+	me = Message{
+		Body: "",
+	}
+	for i := len(s.Lista) - 1; i >= 0; i-- {
+		if x == s.Lista[i].GetId() {
+			me = Message{
+				Body: s.Lista[i].GetInicio() + "%" + s.Lista[i].GetDestino(),
+			}
+			break
+		}
 	}
 
 	return &me, nil
