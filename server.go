@@ -9,12 +9,13 @@ import (
 	"google.golang.org/grpc"
 )
 
+//Server is
 type Server struct {
 }
 
 //CreateFile is
 func CreateFile(name string) {
-	csvFile, err := os.Create(name)
+	csvFile, err := os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
 	if err != nil {
 		log.Fatalf("failed creating file: %s", err)

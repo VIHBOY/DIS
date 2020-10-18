@@ -7,12 +7,15 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/VIHBOY/DIS/chat"
 	"google.golang.org/grpc"
 )
 
+//Camion is
 type Camion struct {
 	id            int
 	Nombre        string
@@ -23,12 +26,14 @@ type Camion struct {
 	NombreArchivo string
 }
 
-func WriteData2(name string, paquete chat.Paquete) {
-
+//WriteData2 is
+func WriteData2(name string, paquete *chat.Paquete, auxiliar *(chat.Message)) {
+	registro2 := strings.Split(auxiliar.Body, "%")
+	inicio, destino := registro2[0], registro2[1]
 	t := time.Now()
 	timestamp := fmt.Sprintf("%02d-%02d-%d %02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute())
 	csvfile, err := os.OpenFile(name, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	registro := []string{timestamp, paquete.GetId(), paquete.GetTipo(), paquete.GetValor(), paquete.GetInicio(), paquete., destino}
+	registro := []string{timestamp, paquete.GetId(), paquete.GetTipo(), strconv.Itoa(int(paquete.GetValor())), inicio, destino, timestamp}
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,16 +46,18 @@ func WriteData2(name string, paquete chat.Paquete) {
 	csvfile.Close()
 }
 
+//CreateFile is
 func CreateFile(name string) {
-	csvFile, err := os.Create(name)
 
+	csvFile, err := os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Fatalf("failed creating file: %s", err)
+		log.Fatal(err)
 	}
 
 	csvFile.Close()
 }
 
+//EnviarPaquete is
 func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 	rand.Seed(time.Now().UnixNano())
 	prob := rand.Intn(6-1) + 1
@@ -97,9 +104,10 @@ func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 
 }
 
-//NewOrden is
+//Send is
 func Send(camion *Camion, tespera int, tenvio int) {
 	var conn *grpc.ClientConn
+	var me chat.Message
 	conn, _ = grpc.Dial(":9000", grpc.WithInsecure())
 	c := chat.NewChatServiceClient(conn)
 	message := chat.Message{
@@ -186,7 +194,16 @@ func Send(camion *Camion, tespera int, tenvio int) {
 				if camion.Paquete1.GetTipo() == "prioritario" && camion.Paquete2.GetTipo() == "prioritario" {
 					camion.LleveRetail = 0
 				}
-				WriteData2(camion.NombreArchivo, camion.Paquete1)
+				me = chat.Message{
+					Body: camion.Paquete1.GetId(),
+				}
+				respuesta, _ := c.BuscarOrden(context.Background(), &me)
+				WriteData2(camion.NombreArchivo, camion.Paquete1, respuesta)
+				me = chat.Message{
+					Body: camion.Paquete2.GetId(),
+				}
+				respuesta, _ = c.BuscarOrden(context.Background(), &me)
+				WriteData2(camion.NombreArchivo, camion.Paquete2, respuesta)
 			} else {
 				time.Sleep(time.Duration(tenvio) * time.Second)
 				EnviarPaquete(camion, c, 2)
@@ -241,6 +258,16 @@ func Send(camion *Camion, tespera int, tenvio int) {
 				if camion.Paquete1.GetTipo() == "prioritario" && camion.Paquete2.GetTipo() == "prioritario" {
 					camion.LleveRetail = 0
 				}
+				me = chat.Message{
+					Body: camion.Paquete1.GetId(),
+				}
+				respuesta, _ := c.BuscarOrden(context.Background(), &me)
+				WriteData2(camion.NombreArchivo, camion.Paquete1, respuesta)
+				me = chat.Message{
+					Body: camion.Paquete2.GetId(),
+				}
+				respuesta, _ = c.BuscarOrden(context.Background(), &me)
+				WriteData2(camion.NombreArchivo, camion.Paquete2, respuesta)
 			}
 		} else {
 			camion.Paquete1 = p1
@@ -273,6 +300,12 @@ func Send(camion *Camion, tespera int, tenvio int) {
 			if camion.Paquete1.GetTipo() == "prioritario" {
 				camion.LleveRetail = 0
 			}
+			me = chat.Message{
+				Body: camion.Paquete1.GetId(),
+			}
+			respuesta, _ := c.BuscarOrden(context.Background(), &me)
+			WriteData2(camion.NombreArchivo, camion.Paquete1, respuesta)
+
 		}
 	} else {
 		camion.Deruta = 0
@@ -298,12 +331,12 @@ func main() {
 		LleveRetail:   0,
 		NombreArchivo: "CamionRetail2.csv",
 	}
-	CamionNormal := Camion{
+	/*CamionNormal := Camion{
 		id:            3,
 		Nombre:        "Normal",
 		Deruta:        0,
 		NombreArchivo: "CamionNormal.csv",
-	}
+	}*/
 	var i2 int
 	var i int
 

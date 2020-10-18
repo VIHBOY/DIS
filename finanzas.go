@@ -12,7 +12,7 @@ import (
 )
 
 type response2 struct {
-	Id       string `json:"id"`
+	ID       string `json:"id"`
 	Track    string `json:"track"`
 	Tipo     string `json:"tipo"`
 	Valor    int    `json:"valor"`

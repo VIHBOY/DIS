@@ -1,67 +1,17 @@
-18-10-2020 01:15,1,retail,Polera,10,tienda-A,casa-A
-18-10-2020 01:15,2,retail,Pantalón,12,tienda-B,casa-B
-18-10-2020 01:15,3,retail,Televisor,110,tienda-C,casa-C
-18-10-2020 01:15,4,retail,Polera,10,tienda-A,casa-A
-18-10-2020 01:15,5,retail,Pantalón,12,tienda-B,casa-B
-18-10-2020 01:15,6,retail,Televisor,110,tienda-C,casa-C
-18-10-2020 01:15,7,retail,Polera,10,tienda-A,casa-A
-18-10-2020 01:15,8,retail,Pantalón,12,tienda-B,casa-B
-18-10-2020 01:15,9,retail,Televisor,110,tienda-C,casa-C
-18-10-2020 01:15,BE127,prioritario,Secador de pelo,15,pyme,casa-K
-18-10-2020 01:15,BE666,prioritario,Jabón para la ducha,8,pyme,casa-A
-18-10-2020 01:15,BE855,normal,Acondicionador,10,pyme,casa-A
-18-10-2020 01:15,BE654,normal,Shampoo,10,pyme,casa-D
-18-10-2020 01:15,BE785,prioritario,Crema para peinar,8,pyme,casa-E
-18-10-2020 01:15,PF654,prioritario,Placa madre,50,pyme,casa-B
-18-10-2020 01:15,PF125,normal,Procesador R,75,pyme,casa-N
-18-10-2020 01:15,PF111,prioritario,Ventilador,10,pyme,casa-N
-18-10-2020 01:16,1,retail,Polera,10,tienda-A,casa-A
-18-10-2020 01:16,2,retail,Pantalón,12,tienda-B,casa-B
-18-10-2020 01:16,3,retail,Televisor,110,tienda-C,casa-C
-18-10-2020 01:16,4,retail,Polera,10,tienda-A,casa-A
-18-10-2020 01:16,5,retail,Pantalón,12,tienda-B,casa-B
-18-10-2020 01:16,6,retail,Televisor,110,tienda-C,casa-C
-18-10-2020 01:16,7,retail,Polera,10,tienda-A,casa-A
-18-10-2020 01:16,8,retail,Pantalón,12,tienda-B,casa-B
-18-10-2020 01:16,9,retail,Televisor,110,tienda-C,casa-C
-18-10-2020 01:16,BE127,prioritario,Secador de pelo,15,pyme,casa-K
-18-10-2020 01:16,BE666,prioritario,Jabón para la ducha,8,pyme,casa-A
-18-10-2020 01:16,BE855,normal,Acondicionador,10,pyme,casa-A
-18-10-2020 01:16,BE654,normal,Shampoo,10,pyme,casa-D
-18-10-2020 01:16,BE785,prioritario,Crema para peinar,8,pyme,casa-E
-18-10-2020 01:16,PF654,prioritario,Placa madre,50,pyme,casa-B
-18-10-2020 01:16,PF125,normal,Procesador R,75,pyme,casa-N
-18-10-2020 01:16,PF111,prioritario,Ventilador,10,pyme,casa-N
-18-10-2020 01:20,BE127,prioritario,Secador de pelo,15,pyme,casa-K
-18-10-2020 01:20,BE666,prioritario,Jabón para la ducha,8,pyme,casa-A
-18-10-2020 01:20,BE855,normal,Acondicionador,10,pyme,casa-A
-18-10-2020 01:20,BE654,normal,Shampoo,10,pyme,casa-D
-18-10-2020 01:20,BE785,prioritario,Crema para peinar,8,pyme,casa-E
-18-10-2020 01:20,PF654,prioritario,Placa madre,50,pyme,casa-B
-18-10-2020 01:20,PF125,normal,Procesador R,75,pyme,casa-N
-18-10-2020 01:20,PF111,prioritario,Ventilador,10,pyme,casa-N
-18-10-2020 01:27,1,retail,Polera,10,tienda-A,casa-A
-18-10-2020 01:27,2,retail,Pantalón,12,tienda-B,casa-B
-18-10-2020 01:27,3,retail,Televisor,110,tienda-C,casa-C
-18-10-2020 01:27,4,retail,Polera,10,tienda-A,casa-A
-18-10-2020 01:27,5,retail,Pantalón,12,tienda-B,casa-B
-18-10-2020 01:27,6,retail,Televisor,110,tienda-C,casa-C
-18-10-2020 01:27,7,retail,Polera,10,tienda-A,casa-A
-18-10-2020 01:27,8,retail,Pantalón,12,tienda-B,casa-B
-18-10-2020 01:27,9,retail,Televisor,110,tienda-C,casa-C
-18-10-2020 01:27,BE127,prioritario,Secador de pelo,15,pyme,casa-K
-18-10-2020 01:27,BE666,prioritario,Jabón para la ducha,8,pyme,casa-A
-18-10-2020 01:27,BE855,normal,Acondicionador,10,pyme,casa-A
-18-10-2020 01:27,BE654,normal,Shampoo,10,pyme,casa-D
-18-10-2020 01:27,BE785,prioritario,Crema para peinar,8,pyme,casa-E
-18-10-2020 01:27,PF654,prioritario,Placa madre,50,pyme,casa-B
-18-10-2020 01:27,PF125,normal,Procesador R,75,pyme,casa-N
-18-10-2020 01:27,PF111,prioritario,Ventilador,10,pyme,casa-N
-18-10-2020 01:29,BE127,prioritario,Secador de pelo,15,pyme,casa-K
-18-10-2020 01:29,BE666,prioritario,Jabón para la ducha,8,pyme,casa-A
-18-10-2020 01:29,BE855,normal,Acondicionador,10,pyme,casa-A
-18-10-2020 01:29,BE654,normal,Shampoo,10,pyme,casa-D
-18-10-2020 01:29,BE785,prioritario,Crema para peinar,8,pyme,casa-E
-18-10-2020 01:29,PF654,prioritario,Placa madre,50,pyme,casa-B
-18-10-2020 01:29,PF125,normal,Procesador R,75,pyme,casa-N
-18-10-2020 01:29,PF111,prioritario,Ventilador,10,pyme,casa-N
+18-10-2020 02:50,1,retail,Polera,10,tienda-A,casa-A
+18-10-2020 02:50,2,retail,Pantalón,12,tienda-B,casa-B
+18-10-2020 02:50,3,retail,Televisor,110,tienda-C,casa-C
+18-10-2020 02:50,4,retail,Polera,10,tienda-A,casa-A
+18-10-2020 02:50,5,retail,Pantalón,12,tienda-B,casa-B
+18-10-2020 02:50,6,retail,Televisor,110,tienda-C,casa-C
+18-10-2020 02:50,7,retail,Polera,10,tienda-A,casa-A
+18-10-2020 02:50,8,retail,Pantalón,12,tienda-B,casa-B
+18-10-2020 02:50,9,retail,Televisor,110,tienda-C,casa-C
+18-10-2020 02:50,BE127,prioritario,Secador de pelo,15,pyme,casa-K
+18-10-2020 02:50,BE666,prioritario,Jabón para la ducha,8,pyme,casa-A
+18-10-2020 02:50,BE855,normal,Acondicionador,10,pyme,casa-A
+18-10-2020 02:50,BE654,normal,Shampoo,10,pyme,casa-D
+18-10-2020 02:50,BE785,prioritario,Crema para peinar,8,pyme,casa-E
+18-10-2020 02:50,PF654,prioritario,Placa madre,50,pyme,casa-B
+18-10-2020 02:50,PF125,normal,Procesador R,75,pyme,casa-N
+18-10-2020 02:50,PF111,prioritario,Ventilador,10,pyme,casa-N

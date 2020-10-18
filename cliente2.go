@@ -15,22 +15,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-type orden struct {
-	id       string
-	producto string
-	valor    string
-	tienda   string
-	destino  string
-	tipo     string
-}
-
-//NewOrden is
-func NewOrden(id string, producto string, valor string, tienda string, destino string, tipo string) orden {
-
-	o := orden{id: id, producto: producto, valor: valor, tienda: tienda, destino: destino, tipo: tipo}
-	return o
-}
-
 func main() {
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
