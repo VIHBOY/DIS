@@ -438,24 +438,25 @@ func (s *Server) CambiarEstado(ctx context.Context, message *Message) (*Message,
 	registro := strings.Split(message.Body, "%")
 	//9000%encamino
 	track, es := registro[0], registro[1]
-	//found := 0
+	found := 0
 	for i := len(s.ListaTotalCola) - 1; i >= 0; i-- {
 		if track == s.ListaTotalCola[i].GetTrack() {
 			s.ListaTotalCola[i].Estado = es
-			s.ListaTotalCola[i].Intentos++
-			//found = i
+			if es != "No Recibido" {
+				s.ListaTotalCola[i].Intentos++
+			}
+			found = i
 			break
 		}
 	}
 
-	/*if es == "Recibido" {
+	if es == "Recibido" {
 		MandarFinanzas(fmt.Sprintf(`{"id":"%s", "track":"%s", "tipo":"%s", "valor":%d, "intentos":%d, "estado":"%s"}`, s.ListaTotalCola[found].Id, s.ListaTotalCola[found].Track, s.ListaTotalCola[found].Tipo, s.ListaTotalCola[found].Valor, s.ListaTotalCola[found].Intentos, s.ListaTotalCola[found].Estado))
 	}
 
 	if es == "No Recibido" {
-		MandarFinanzas(fmt.Sprintf(`{"id":"%s", "track":"%s", "tipo":"%s", "valor":%d, "intentos":3, "estado":"%s"}`, s.ListaTotalCola[found].Id, s.ListaTotalCola[found].Track, s.ListaTotalCola[found].Tipo, s.ListaTotalCola[found].Valor, s.ListaTotalCola[found].Estado))
+		MandarFinanzas(fmt.Sprintf(`{"id":"%s", "track":"%s", "tipo":"%s", "valor":%d, "intentos":%d, "estado":"%s"}`, s.ListaTotalCola[found].Id, s.ListaTotalCola[found].Track, s.ListaTotalCola[found].Tipo, s.ListaTotalCola[found].Valor, s.ListaTotalCola[found].Intentos, s.ListaTotalCola[found].Estado))
 	}
-	*/
 	me := Message{
 		Body: "",
 	}

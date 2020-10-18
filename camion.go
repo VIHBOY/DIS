@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/VIHBOY/DIS/chat"
@@ -17,6 +18,7 @@ import (
 
 //Camion is
 type Camion struct {
+	mux           sync.Mutex
 	id            int
 	Nombre        string
 	Paquete1      *chat.Paquete
@@ -69,8 +71,8 @@ func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 			}
 			camion.Paquete1.Estado = "En Camino"
 			camion.Paquete1.Intentos++
-			log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete1.Id, camion.Paquete1.Intentos)
 			c.CambiarEstado(context.Background(), &me3)
+			log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete1.Id, camion.Paquete1.Intentos)
 
 		} else {
 			me3 := chat.Message{
@@ -78,8 +80,9 @@ func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 			}
 			camion.Paquete1.Estado = "Recibido"
 			camion.Paquete1.Intentos++
-			log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete1.Id, camion.Paquete1.Intentos)
 			c.CambiarEstado(context.Background(), &me3)
+			log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete1.Id, camion.Paquete1.Intentos)
+
 		}
 	}
 	if np == 2 {
@@ -89,16 +92,18 @@ func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 			}
 			camion.Paquete2.Estado = "En Camino"
 			camion.Paquete2.Intentos++
-			log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete2.Id, camion.Paquete2.Intentos)
 			c.CambiarEstado(context.Background(), &me3)
+			log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete2.Id, camion.Paquete2.Intentos)
+
 		} else {
 			me3 := chat.Message{
 				Body: camion.Paquete2.GetTrack() + "%" + "Recibido",
 			}
 			camion.Paquete2.Estado = "Recibido"
 			camion.Paquete2.Intentos++
-			log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete2.Id, camion.Paquete2.Intentos)
 			c.CambiarEstado(context.Background(), &me3)
+			log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete2.Id, camion.Paquete2.Intentos)
+
 		}
 	}
 
@@ -113,12 +118,9 @@ func Send(camion *Camion, tespera int, tenvio int) {
 	message := chat.Message{
 		Body: camion.Nombre,
 	}
-	if camion.id == 1 || camion.id == 2 {
-		log.Printf("Prioridad: %d de ID: %d", camion.LleveRetail, camion.id)
-	}
+
 	if camion.id == 1 || camion.id == 2 {
 		if camion.LleveRetail == 1 {
-			log.Printf("Poto")
 			message = chat.Message{
 				Body: "RetailPrio",
 			}
@@ -128,7 +130,6 @@ func Send(camion *Camion, tespera int, tenvio int) {
 
 	if camion.id == 1 || camion.id == 2 {
 		if camion.LleveRetail == 1 {
-			log.Printf("Poto2")
 
 			message = chat.Message{
 				Body: "RetailPrio2",
@@ -151,23 +152,92 @@ func Send(camion *Camion, tespera int, tenvio int) {
 				EnviarPaquete(camion, c, 2)
 
 				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
-					time.Sleep(time.Duration(tenvio) * time.Second)
-					EnviarPaquete(camion, c, 1)
+
+					if camion.Paquete1.GetTipo() == "normal" || camion.Paquete1.GetTipo() == "prioritario" {
+						log.Printf("Valor %d Paquete: %d", camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos())*10, camion.Paquete1.Id)
+						if camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos())*10 >= 0 {
+							time.Sleep(time.Duration(tenvio) * time.Second)
+							EnviarPaquete(camion, c, 1)
+						} else {
+							me3 := chat.Message{
+								Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+							}
+							camion.Paquete1.Estado = "No Recibido"
+							log.Printf("%d", camion.Paquete1.Intentos)
+							c.CambiarEstado(context.Background(), &me3)
+						}
+
+					} else {
+						time.Sleep(time.Duration(tenvio) * time.Second)
+						EnviarPaquete(camion, c, 1)
+					}
+
 				}
 				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
-					time.Sleep(time.Duration(tenvio) * time.Second)
-					EnviarPaquete(camion, c, 2)
+
+					if camion.Paquete2.GetTipo() == "normal" || camion.Paquete2.GetTipo() == "prioritario" {
+						log.Printf("Valor %d Paquete: %d", camion.Paquete2.GetValor()-(camion.Paquete2.GetIntentos())*10, camion.Paquete2.Id)
+						if camion.Paquete2.GetValor()-(camion.Paquete2.GetIntentos())*10 >= 0 {
+							time.Sleep(time.Duration(tenvio) * time.Second)
+							EnviarPaquete(camion, c, 2)
+						} else {
+							me3 := chat.Message{
+								Body: camion.Paquete2.GetTrack() + "%" + "No Recibido",
+							}
+							camion.Paquete2.Estado = "No Recibido"
+							log.Printf("%d", camion.Paquete2.Intentos)
+							c.CambiarEstado(context.Background(), &me3)
+						}
+
+					} else {
+						time.Sleep(time.Duration(tenvio) * time.Second)
+						EnviarPaquete(camion, c, 2)
+					}
+
 				}
 
 				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
-					time.Sleep(time.Duration(tenvio) * time.Second)
 
-					EnviarPaquete(camion, c, 1)
+					if camion.Paquete1.GetTipo() == "normal" || camion.Paquete1.GetTipo() == "prioritario" {
+						log.Printf("Valor %d Paquete: %d", camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos())*10, camion.Paquete1.Id)
+						if camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos())*10 >= 0 {
+							time.Sleep(time.Duration(tenvio) * time.Second)
+							EnviarPaquete(camion, c, 1)
+						} else {
+							me3 := chat.Message{
+								Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+							}
+							camion.Paquete1.Estado = "No Recibido"
+							log.Printf("%d", camion.Paquete1.Intentos)
+							c.CambiarEstado(context.Background(), &me3)
+						}
+
+					} else {
+						time.Sleep(time.Duration(tenvio) * time.Second)
+						EnviarPaquete(camion, c, 1)
+					}
 				}
 				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
-					time.Sleep(time.Duration(tenvio) * time.Second)
 
-					EnviarPaquete(camion, c, 2)
+					if camion.Paquete2.GetTipo() == "normal" || camion.Paquete2.GetTipo() == "prioritario" {
+						log.Printf("Valor %d Paquete: %d", camion.Paquete2.GetValor()-(camion.Paquete2.GetIntentos())*10, camion.Paquete2.Id)
+						if camion.Paquete2.GetValor()-(camion.Paquete2.GetIntentos())*10 >= 0 {
+							time.Sleep(time.Duration(tenvio) * time.Second)
+							EnviarPaquete(camion, c, 2)
+						} else {
+							me3 := chat.Message{
+								Body: camion.Paquete2.GetTrack() + "%" + "No Recibido",
+							}
+							camion.Paquete2.Estado = "No Recibido"
+							log.Printf("%d", camion.Paquete2.Intentos)
+							c.CambiarEstado(context.Background(), &me3)
+						}
+
+					} else {
+						time.Sleep(time.Duration(tenvio) * time.Second)
+						EnviarPaquete(camion, c, 2)
+					}
+
 				}
 
 				////////////////////////////////////
@@ -213,26 +283,91 @@ func Send(camion *Camion, tespera int, tenvio int) {
 				EnviarPaquete(camion, c, 1)
 
 				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
-					time.Sleep(time.Duration(tenvio) * time.Second)
 
-					EnviarPaquete(camion, c, 2)
+					if camion.Paquete2.GetTipo() == "normal" || camion.Paquete2.GetTipo() == "prioritario" {
+						log.Printf("Valor %d Paquete: %d", camion.Paquete2.GetValor()-(camion.Paquete2.GetIntentos())*10, camion.Paquete2.Id)
+						if camion.Paquete2.GetValor()-(camion.Paquete2.GetIntentos())*10 >= 0 {
+							time.Sleep(time.Duration(tenvio) * time.Second)
+							EnviarPaquete(camion, c, 2)
+						} else {
+							me3 := chat.Message{
+								Body: camion.Paquete2.GetTrack() + "%" + "No Recibido",
+							}
+							camion.Paquete2.Estado = "No Recibido"
+							log.Printf("%d", camion.Paquete2.Intentos)
+							c.CambiarEstado(context.Background(), &me3)
+						}
+
+					} else {
+						time.Sleep(time.Duration(tenvio) * time.Second)
+						EnviarPaquete(camion, c, 2)
+					}
+
 				}
 
 				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
-					time.Sleep(time.Duration(tenvio) * time.Second)
 
-					EnviarPaquete(camion, c, 1)
+					if camion.Paquete1.GetTipo() == "normal" || camion.Paquete1.GetTipo() == "prioritario" {
+						log.Printf("Valor %d Paquete: %d", camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos())*10, camion.Paquete1.Id)
+						if camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos())*10 >= 0 {
+							time.Sleep(time.Duration(tenvio) * time.Second)
+							EnviarPaquete(camion, c, 1)
+						} else {
+							me3 := chat.Message{
+								Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+							}
+							camion.Paquete1.Estado = "No Recibido"
+							log.Printf("%d", camion.Paquete1.Intentos)
+							c.CambiarEstado(context.Background(), &me3)
+						}
+
+					} else {
+						time.Sleep(time.Duration(tenvio) * time.Second)
+						EnviarPaquete(camion, c, 1)
+					}
 				}
 				if camion.Paquete2.Intentos < 3 && camion.Paquete2.GetEstado() == "En Camino" {
-					time.Sleep(time.Duration(tenvio) * time.Second)
 
-					EnviarPaquete(camion, c, 2)
+					if camion.Paquete2.GetTipo() == "normal" || camion.Paquete2.GetTipo() == "prioritario" {
+						log.Printf("Valor %d Paquete: %d", camion.Paquete2.GetValor()-(camion.Paquete2.GetIntentos())*10, camion.Paquete2.Id)
+						if camion.Paquete2.GetValor()-(camion.Paquete2.GetIntentos())*10 >= 0 {
+							time.Sleep(time.Duration(tenvio) * time.Second)
+							EnviarPaquete(camion, c, 2)
+						} else {
+							me3 := chat.Message{
+								Body: camion.Paquete2.GetTrack() + "%" + "No Recibido",
+							}
+							camion.Paquete2.Estado = "No Recibido"
+							log.Printf("%d", camion.Paquete2.Intentos)
+							c.CambiarEstado(context.Background(), &me3)
+						}
+
+					} else {
+						time.Sleep(time.Duration(tenvio) * time.Second)
+						EnviarPaquete(camion, c, 2)
+					}
+
 				}
 
 				if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
-					time.Sleep(time.Duration(tenvio) * time.Second)
+					if camion.Paquete1.GetTipo() == "normal" || camion.Paquete1.GetTipo() == "prioritario" {
+						log.Printf("Valor %d Paquete: %d", camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos())*10, camion.Paquete1.Id)
+						if camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos())*10 >= 0 {
+							time.Sleep(time.Duration(tenvio) * time.Second)
+							EnviarPaquete(camion, c, 1)
+						} else {
+							me3 := chat.Message{
+								Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+							}
+							camion.Paquete1.Estado = "No Recibido"
+							log.Printf("%d", camion.Paquete1.Intentos)
+							c.CambiarEstado(context.Background(), &me3)
+						}
 
-					EnviarPaquete(camion, c, 1)
+					} else {
+						time.Sleep(time.Duration(tenvio) * time.Second)
+						EnviarPaquete(camion, c, 1)
+					}
 				}
 				////////////////////
 				if camion.Paquete1.Intentos == 3 && camion.Paquete1.GetEstado() == "En Camino" {
@@ -276,14 +411,46 @@ func Send(camion *Camion, tespera int, tenvio int) {
 
 			EnviarPaquete(camion, c, 1)
 			if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
-				time.Sleep(time.Duration(tenvio) * time.Second)
 
-				EnviarPaquete(camion, c, 1)
+				if camion.Paquete1.GetTipo() == "normal" || camion.Paquete1.GetTipo() == "prioritario" {
+					log.Printf("Valor %d Paquete: %d", camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos())*10, camion.Paquete1.Id)
+					if camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos())*10 >= 0 {
+						time.Sleep(time.Duration(tenvio) * time.Second)
+						EnviarPaquete(camion, c, 1)
+					} else {
+						me3 := chat.Message{
+							Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+						}
+						camion.Paquete1.Estado = "No Recibido"
+						log.Printf("%d", camion.Paquete1.Intentos)
+						c.CambiarEstado(context.Background(), &me3)
+					}
+
+				} else {
+					time.Sleep(time.Duration(tenvio) * time.Second)
+					EnviarPaquete(camion, c, 1)
+				}
 			}
 			if camion.Paquete1.Intentos < 3 && camion.Paquete1.GetEstado() == "En Camino" {
-				time.Sleep(time.Duration(tenvio) * time.Second)
 
-				EnviarPaquete(camion, c, 1)
+				if camion.Paquete1.GetTipo() == "normal" || camion.Paquete1.GetTipo() == "prioritario" {
+					log.Printf("Valor %d Paquete: %d", camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos())*10, camion.Paquete1.Id)
+					if camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos())*10 >= 0 {
+						time.Sleep(time.Duration(tenvio) * time.Second)
+						EnviarPaquete(camion, c, 1)
+					} else {
+						me3 := chat.Message{
+							Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+						}
+						camion.Paquete1.Estado = "No Recibido"
+						log.Printf("%d", camion.Paquete1.Intentos)
+						c.CambiarEstado(context.Background(), &me3)
+					}
+
+				} else {
+					time.Sleep(time.Duration(tenvio) * time.Second)
+					EnviarPaquete(camion, c, 1)
+				}
 			}
 			if camion.Paquete1.Intentos == 3 && camion.Paquete1.GetEstado() == "En Camino" {
 				me3 := chat.Message{
@@ -331,12 +498,12 @@ func main() {
 		LleveRetail:   0,
 		NombreArchivo: "CamionRetail2.csv",
 	}
-	/*CamionNormal := Camion{
+	CamionNormal := Camion{
 		id:            3,
 		Nombre:        "Normal",
 		Deruta:        0,
 		NombreArchivo: "CamionNormal.csv",
-	}*/
+	}
 	var i2 int
 	var i int
 
@@ -363,11 +530,11 @@ func main() {
 			go Send(&CamionRetail2, i, i2)
 
 		}
-		/*if CamionNormal.Deruta == 0 {
+		if CamionNormal.Deruta == 0 {
 			CamionNormal.Deruta = 1
 			go Send(&CamionNormal, i, i2)
 
-		}*/
+		}
 
 	}
 

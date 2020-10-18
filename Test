@@ -28,3 +28,23 @@ CamionR1 := Camion{
 	CamionRetail2 := Camion{
 		Nombre: "Retail",
 	}
+
+
+
+						if camion.Paquete1.GetTipo() == "normal" || camion.Paquete1.GetTipo() == "prioritario" {
+						log.Printf("Camion: %d: Paquete: %s Intentos %d:\n", camion.id, camion.Paquete1.Id, camion.Paquete1.Intentos)
+						if camion.Paquete1.GetValor()-(camion.Paquete1.GetIntentos()-1)*10 >= 0 {
+							time.Sleep(time.Duration(tenvio) * time.Second)
+							EnviarPaquete(camion, c, 1)
+						} else {
+							me3 := chat.Message{
+								Body: camion.Paquete1.GetTrack() + "%" + "No Recibido",
+							}
+							camion.Paquete1.Estado = "No Recibido"
+							log.Printf("%d", camion.Paquete1.Intentos)
+							c.CambiarEstado(context.Background(), &me3)
+						}
+					} else if camion.Paquete1.GetTipo() == "retail" {
+						time.Sleep(time.Duration(tenvio) * time.Second)
+						EnviarPaquete(camion, c, 1)
+					}
