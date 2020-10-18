@@ -15,7 +15,7 @@ import (
 
 //PackJSON is a struct.
 type PackJSON struct {
-	Id       string  `json:"id"`
+	ID       string  `json:"id"`
 	Track    string  `json:"track"`
 	Tipo     string  `json:"tipo"`
 	Valor    int     `json:"valor"`
@@ -104,7 +104,7 @@ func main() {
 			if res.Estado == "Recibido" {
 				if res.Tipo == "retail" {
 					ListaPJ = append(ListaPJ, PackJSON{
-						Id:       res.Id,
+						ID:       res.ID,
 						Track:    res.Track,
 						Tipo:     res.Tipo,
 						Valor:    res.Valor,
@@ -116,7 +116,7 @@ func main() {
 					})
 				} else if res.Tipo == "normal" {
 					ListaPJ = append(ListaPJ, PackJSON{
-						Id:       res.Id,
+						ID:       res.ID,
 						Track:    res.Track,
 						Tipo:     res.Tipo,
 						Valor:    res.Valor,
@@ -128,7 +128,7 @@ func main() {
 					})
 				} else {
 					ListaPJ = append(ListaPJ, PackJSON{
-						Id:       res.Id,
+						ID:       res.ID,
 						Track:    res.Track,
 						Tipo:     res.Tipo,
 						Valor:    res.Valor,
@@ -142,7 +142,7 @@ func main() {
 			} else {
 				if res.Tipo == "retail" {
 					ListaPJ = append(ListaPJ, PackJSON{
-						Id:       res.Id,
+						ID:       res.ID,
 						Track:    res.Track,
 						Tipo:     res.Tipo,
 						Valor:    res.Valor,
@@ -155,7 +155,7 @@ func main() {
 
 				} else if res.Tipo == "normal" {
 					ListaPJ = append(ListaPJ, PackJSON{
-						Id:       res.Id,
+						ID:       res.ID,
 						Track:    res.Track,
 						Tipo:     res.Tipo,
 						Valor:    res.Valor,
@@ -167,7 +167,7 @@ func main() {
 					})
 				} else {
 					ListaPJ = append(ListaPJ, PackJSON{
-						Id:       res.Id,
+						ID:       res.ID,
 						Track:    res.Track,
 						Tipo:     res.Tipo,
 						Valor:    res.Valor,
@@ -183,7 +183,7 @@ func main() {
 			tGanancia += ListaPJ[LenListaPJ-1].Ganancia
 			tPerdida += ListaPJ[LenListaPJ-1].Perdida
 			tTotal += ListaPJ[LenListaPJ-1].Total
-			WriteData("finanzas.csv", ListaPJ[LenListaPJ-1].Id, ListaPJ[LenListaPJ-1].Track, ListaPJ[LenListaPJ-1].Tipo, ListaPJ[LenListaPJ-1].Valor, ListaPJ[LenListaPJ-1].Intentos, ListaPJ[LenListaPJ-1].Estado, ListaPJ[LenListaPJ-1].Ganancia, ListaPJ[LenListaPJ-1].Perdida, ListaPJ[LenListaPJ-1].Total)
+			WriteData("finanzas.csv", ListaPJ[LenListaPJ-1].ID, ListaPJ[LenListaPJ-1].Track, ListaPJ[LenListaPJ-1].Tipo, ListaPJ[LenListaPJ-1].Valor, ListaPJ[LenListaPJ-1].Intentos, ListaPJ[LenListaPJ-1].Estado, ListaPJ[LenListaPJ-1].Ganancia, ListaPJ[LenListaPJ-1].Perdida, ListaPJ[LenListaPJ-1].Total)
 		}
 	}()
 
