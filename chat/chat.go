@@ -111,6 +111,7 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 		Tipo:     orden.GetTipo(),
 	})
 	val, _ := strconv.Atoi(orden.GetValor())
+	idpaqueteaux, _ := strconv.Atoi(orden.GetId())
 	if orden.GetTipo() == "retail" {
 		s.ColaRetail2 = append(s.ColaRetail2, Paquete{
 			Id:       orden.GetId(),
@@ -129,8 +130,10 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 			Estado:   "En Bodega",
 		})
 		s.ListaSeguimiento = append(s.ListaSeguimiento, Seguimiento{
-			id_paquete: orden.GetId(),
-			Estado:     "En Bodega",
+			Idpaquete:     int32(idpaqueteaux),
+			Estado:        "En Bodega",
+			Idcamion:      0,
+			Idseguimiento: int32(idpaqueteaux),
 		})
 		s.CantidadRetail++
 
