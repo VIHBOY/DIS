@@ -67,7 +67,7 @@ func main() {
 	var tPerdida float64
 	var tTotal float64
 	var LenListaPJ int
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@dist25:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
