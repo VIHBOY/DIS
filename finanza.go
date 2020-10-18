@@ -67,7 +67,7 @@ func main() {
 	var tPerdida float64
 	var tTotal float64
 	var LenListaPJ int
-	conn, err := amqp.Dial("amqp://guest:guest@dist25:5672/")
+	conn, err := amqp.Dial("amqp://admin:admin@:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -199,8 +199,7 @@ func main() {
 		// convert CRLF to LF
 		text = strings.Replace(text, "\r\n", "", -1)
 		if strings.Compare("1", text) == 0 {
-			fmt.Println(ListaPJ)
-			fmt.Println(tGanancia, tPerdida, tTotal)
+			fmt.Println("Ganancia: %f, Perdida: %f, Total: %f", tGanancia, tPerdida, tTotal)
 		}
 
 		if strings.Compare("2", text) == 0 {

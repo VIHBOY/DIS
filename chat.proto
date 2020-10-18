@@ -32,10 +32,8 @@ message Message{
 }
 
 service ChatService{
-	rpc MandarOrden(Message) returns (Message){}
 	rpc Consultar(Message) returns (Message){}
 	rpc MandarOrden2(Orden) returns (Message){}
-	rpc Recibir(Message) returns (Message){}
 	rpc Recibir2(Message) returns (Paquete){}
 	rpc CambiarEstado(Message) returns (Message){}
 	rpc CambiarIntentos(Message) returns (Message){}

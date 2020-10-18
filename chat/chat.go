@@ -60,16 +60,6 @@ func WriteData(tipo string, id string, producto string, valor string, inicio str
 	csvfile.Close()
 }
 
-//MandarOrden is
-func (s *Server) MandarOrden(ctx context.Context, message *Message) (*Message, error) {
-	registro := strings.Split(message.Body, "%")
-	id, producto, valor, inicio, destino, tipo := registro[0], registro[1], registro[2], registro[3], registro[4], registro[5]
-	log.Printf("Su codigo de tracking es %s", id)
-	WriteData(tipo, id, producto, valor, inicio, destino)
-	//MURO DE BERLINI
-	return message, nil
-}
-
 //Consultar is
 func (s *Server) Consultar(ctx context.Context, message *Message) (*Message, error) {
 	x := message.GetBody()
@@ -180,48 +170,6 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 	return &me, nil
 }
 
-func remove(slice []string, s int) []string {
-	return append(slice[:s], slice[s+1:]...)
-}
-
-//Recibir is
-func (s *Server) Recibir(ctx context.Context, message *Message) (*Message, error) {
-	me := Message{
-		Body: "",
-	}
-	if message.GetBody() == "Retail" {
-		if s.CantidadRetail > 0 {
-			me = Message{
-				Body: s.ColaRetail[0],
-			}
-			remove(s.ColaRetail, 0)
-			s.CantidadRetail--
-		}
-
-	}
-	if message.GetBody() == "Normal" {
-		if s.CantidadPrio > 0 {
-			me = Message{
-				Body: s.ColaPrio[0],
-			}
-			remove(s.ColaPrio, 0)
-			s.CantidadPrio--
-		} else {
-			me = Message{
-				Body: s.ColaRetail[0],
-			}
-			s.CantidadRetail--
-			remove(s.ColaRetail, 0)
-		}
-
-	}
-	return &me, nil
-}
-
-func remove2(slice []Paquete, s int) []Paquete {
-	return append(slice[:s], slice[s+1:]...)
-}
-
 //Recibir2 is
 func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, error) {
 	var me Paquete
@@ -304,7 +252,6 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 
 	if message.GetBody() == "RetailPrio" {
 		if len(s.ColaRetail2) > 0 {
-			log.Printf("Entre a RetailPrio2 en Prio")
 
 			me = Paquete{
 				Id:       s.ColaRetail2[0].GetId(),
@@ -351,7 +298,6 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 
 	if message.GetBody() == "RetailPrio2" {
 		if len(s.ColaPrio2) > 0 {
-			log.Printf("Entre a RetailPrio2 en Prio")
 			me = Paquete{
 				Id:       s.ColaPrio2[0].GetId(),
 				Track:    s.ColaPrio2[0].GetTrack(),
@@ -401,7 +347,7 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 
 //MandarFinanzas is
 func MandarFinanzas(pack string) {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://admin:admin@dist28:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -429,7 +375,6 @@ func MandarFinanzas(pack string) {
 			ContentType: "application/json",
 			Body:        []byte(body),
 		})
-	log.Printf(" [x] Sent %s", body)
 	failOnError(err, "Failed to publish a message")
 }
 
