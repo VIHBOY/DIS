@@ -401,7 +401,7 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 
 //MandarFinanzas is
 func MandarFinanzas(pack string) {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@dist28:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
