@@ -15,53 +15,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-//HacerEnvios is
-func HacerEnvios(i3 int, c chat.ChatServiceClient, i2 int) {
-	var tipo string
-	var arch string
-	if i3 == 1 {
-		arch = "retail.csv"
-	}
-	if i3 == 2 {
-		arch = "pymes.csv"
-
-	}
-	csvfile, _ := os.Open(arch)
-	r := csv.NewReader(csvfile)
-	r.Read()
-	for {
-		record, err := r.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatal(err)
-		}
-		if i3 == 2 {
-			if record[5] == "0" {
-				tipo = "normal"
-			} else if record[5] == "1" {
-				tipo = "prioritario"
-			}
-		}
-		if i3 == 1 {
-			tipo = "retail"
-		}
-
-		message := chat.Orden{
-			Id:       record[0],
-			Producto: record[1],
-			Valor:    record[2],
-			Inicio:   record[3],
-			Destino:  record[4],
-			Tipo:     tipo,
-		}
-		response, err := c.MandarOrden2(context.Background(), &message)
-		log.Printf("Su codigo de tracking es %s", response.Body)
-		time.Sleep(time.Duration(i2) * time.Second)
-	}
-}
-
 func main() {
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
@@ -102,7 +55,48 @@ func main() {
 		// convert CRLF to LF
 		text = strings.Replace(text, "\n", "", -1)
 		if strings.Compare("1", text) == 0 {
-			go HacerEnvios(i3, c, i2)
+			var arch string
+			if i3 == 1 {
+				arch = "retail.csv"
+			}
+			if i3 == 2 {
+				arch = "pymes.csv"
+
+			}
+			csvfile, _ := os.Open(arch)
+			r := csv.NewReader(csvfile)
+			r.Read()
+			for {
+				record, err := r.Read()
+				if err == io.EOF {
+					break
+				}
+				if err != nil {
+					log.Fatal(err)
+				}
+				if i3 == 2 {
+					if record[5] == "0" {
+						tipo = "normal"
+					} else if record[5] == "1" {
+						tipo = "prioritario"
+					}
+				}
+				if i3 == 1 {
+					tipo = "retail"
+				}
+
+				message := chat.Orden{
+					Id:       record[0],
+					Producto: record[1],
+					Valor:    record[2],
+					Inicio:   record[3],
+					Destino:  record[4],
+					Tipo:     tipo,
+				}
+				response, err := c.MandarOrden2(context.Background(), &message)
+				log.Printf("Su codigo de tracking es %s", response.Body)
+				time.Sleep(time.Duration(i2) * time.Second)
+			}
 		}
 
 		if strings.Compare("2", text) == 0 {
