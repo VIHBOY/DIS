@@ -248,7 +248,7 @@ func main() {
 		fmt.Print("2. Salir \n")
 		text, _ := reader.ReadString('\n')
 		// convert CRLF to LF
-		text = strings.Replace(text, "\r\n", "", -1)
+		text = strings.Replace(text, "\n", "", -1)
 		if strings.Compare("1", text) == 0 {
 			fmt.Println("Ganancia: %f, Perdida: %f, Total: %f", tGanancia, tPerdida, tTotal)
 			break

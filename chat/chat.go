@@ -91,14 +91,12 @@ func WriteData(tipo string, id string, producto string, valor string, inicio str
 func (s *Server) Consultar(ctx context.Context, message *Message) (*Message, error) {
 	x := message.GetBody()
 	x3 := x
-	log.Println(x)
 	me := Message{
-		Body: x[0 : len(x)-3],
+		Body: x[0 : len(x)-4],
 	}
 
 	for i := len(s.ListaTotalCola) - 1; i >= 0; i-- {
 		if x3 == s.ListaTotalCola[i].GetTrack() {
-			log.Println(s.ListaTotalCola[i].GetEstado())
 			me = Message{
 				Body: s.ListaTotalCola[i].GetEstado(),
 			}

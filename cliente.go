@@ -102,7 +102,7 @@ func main() {
 		if strings.Compare("2", text) == 0 {
 			text2, _ := reader.ReadString('\n')
 			// convert CRLF to LF
-			text2 = strings.Replace(text2, "\r\n", "", -1)
+			text2 = strings.Replace(text2, "\n", "", -1)
 			message := chat.Message{
 				Body: text2,
 			}

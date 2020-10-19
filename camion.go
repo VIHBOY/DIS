@@ -160,8 +160,8 @@ func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 **
 * Input:
 * *Camion camion : Puntero a un camion
-* int tespera : Tiempo de espera por un segundo paquete del camión
-* int tenvio : Tiempo que demora en entregar un paquete un camión
+* int tespera : Tiempo de espera por un segundo paquete del camion
+* int tenvio : Tiempo que demora en entregar un paquete un camion
 ***/
 func Send(camion *Camion, tespera int, tenvio int) {
 	var conn *grpc.ClientConn
@@ -560,13 +560,13 @@ func main() {
 	var i2 int
 	var i int
 
-	fmt.Println("Ingrese Tiempo espera Camion")
+	fmt.Println("Ingrese Tiempo de espera por un segundo paquete del camion")
 	_, err := fmt.Scanf("%d\n", &i)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	fmt.Println("Ingrese Tiempo espera Camion")
+	fmt.Println("Ingrese Tiempo que demora en entregar un paquete un camion")
 	_, err2 := fmt.Scanf("%d\n", &i2)
 	if err2 != nil {
 		fmt.Println(err2)
