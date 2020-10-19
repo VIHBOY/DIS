@@ -15,24 +15,39 @@ import (
 )
 
 //Server is
+/***
+* struct Server
+**
+* Estructura Server
+**
+* Fields
+* sync.Mutex mux Herramienta de sincronizacion
+* []Paquete ColarNormal2 Lista de Paquetes
+* []Paquete ColaPrio2 Lista de Paquetes
+* []Paquete ColaRetail2 Lista de Paquetes
+* []Orden Lista Lista de Paquetes
+* []Paquete ListaTotalCola Lista de Paquetes
+**
+***/
 type Server struct {
-	mux              sync.Mutex
-	Retail           int
-	Lista1           []string
-	ColaNormal       []string
-	ColaNormal2      []Paquete
-	ColaPrio2        []Paquete
-	ColaRetail2      []Paquete
-	CantidadNormal   int
-	ColaPrio         []string
-	CantidadPrio     int
-	ColaRetail       []string
-	CantidadRetail   int
-	Lista            []Orden
-	ListaTotalCola   []Paquete
-	ListaSeguimiento []Seguimiento
+	mux            sync.Mutex
+	ColaNormal2    []Paquete
+	ColaPrio2      []Paquete
+	ColaRetail2    []Paquete
+	Lista          []Orden
+	ListaTotalCola []Paquete
 }
 
+/***
+* func failOnError
+**
+* Resumen Devuelve error
+**
+* Input: err, msg
+* error :  error
+* string : mensaje
+**
+***/
 func failOnError(err error, msg string) {
 	if err != nil {
 		log.Fatalf("%s: %s", msg, err)
@@ -40,6 +55,18 @@ func failOnError(err error, msg string) {
 }
 
 //WriteData is
+/***
+* func WriteData
+**
+* Escribe los datos de las ordenes en su csv
+**
+* string tipo dato de orden
+* string id dato de orden
+* string producto dato de orden
+* string valor dato de orden
+* string inicio dato de orden
+* string destino dato de orden
+***/
 func WriteData(tipo string, id string, producto string, valor string, inicio string, destino string) {
 	t := time.Now()
 	timestamp := fmt.Sprintf("%02d-%02d-%d %02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute())
@@ -83,6 +110,16 @@ func (s *Server) Consultar(ctx context.Context, message *Message) (*Message, err
 }
 
 //MandarOrden2 is
+/***
+* func MandarOrden2
+**
+* Recibe ordenes y crea paquetes
+**
+* context.Context contexto
+* *Orden puntero orden
+**
+*Devulve un mensaje indicando el track
+***/
 func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, error) {
 	s.mux.Lock()
 	trackin := orden.GetId() + "000" + " Para el producto: " + orden.GetId()
@@ -101,7 +138,6 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 		Tipo:     orden.GetTipo(),
 	})
 	val, _ := strconv.Atoi(orden.GetValor())
-	idpaqueteaux, _ := strconv.Atoi(orden.GetId())
 	if orden.GetTipo() == "retail" {
 		s.ColaRetail2 = append(s.ColaRetail2, Paquete{
 			Id:       orden.GetId(),
@@ -119,13 +155,6 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 			Intentos: 0,
 			Estado:   "En Bodega",
 		})
-		s.ListaSeguimiento = append(s.ListaSeguimiento, Seguimiento{
-			Idpaquete:     int32(idpaqueteaux),
-			Estado:        "En Bodega",
-			Idcamion:      0,
-			Idseguimiento: int32(idpaqueteaux),
-		})
-		s.CantidadRetail++
 
 	}
 	if orden.GetTipo() == "normal" {
@@ -145,7 +174,6 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 			Intentos: 0,
 			Estado:   "En Bodega",
 		})
-		s.CantidadNormal++
 	}
 	if orden.GetTipo() == "prioritario" {
 		s.ColaPrio2 = append(s.ColaPrio2, Paquete{
@@ -164,13 +192,22 @@ func (s *Server) MandarOrden2(ctx context.Context, orden *Orden) (*Message, erro
 			Intentos: 0,
 			Estado:   "En Bodega",
 		})
-		s.CantidadPrio++
 	}
 	s.mux.Unlock()
 	return &me, nil
 }
 
 //Recibir2 is
+/***
+* func Recibir2
+**
+* Reparte paquetes a los camiones que lo soliciten
+**
+* context.Context contexto
+* *Message puntero message que contiene el tipo de camion
+**
+*	Devulve un puntero al paquete que sera asignado
+***/
 func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, error) {
 	var me Paquete
 	s.mux.Lock()
@@ -346,6 +383,15 @@ func (s *Server) Recibir2(ctx context.Context, message *Message) (*Paquete, erro
 }
 
 //MandarFinanzas is
+/***
+* func MandarFinanzas
+**
+* Manda json al servidor Rabbit
+**
+*
+* string pack string con datos del json
+**
+***/
 func MandarFinanzas(pack string) {
 	conn, err := amqp.Dial("amqp://admin:admin@dist28:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
@@ -379,6 +425,15 @@ func MandarFinanzas(pack string) {
 }
 
 //CambiarEstado is
+/***
+* func CambiarEstado
+**
+* dado un numero de track actualiza los campos
+**
+*
+* devuelve un mensaje vacio
+**
+***/
 func (s *Server) CambiarEstado(ctx context.Context, message *Message) (*Message, error) {
 	registro := strings.Split(message.Body, "%")
 	//9000%encamino
@@ -410,6 +465,15 @@ func (s *Server) CambiarEstado(ctx context.Context, message *Message) (*Message,
 }
 
 //CambiarIntentos is
+/***
+* func CambiarIntentos
+**
+* dado un numero de track actualiza los campos
+**
+*
+* devuelve un mensaje vacio
+**
+***/
 func (s *Server) CambiarIntentos(ctx context.Context, message *Message) (*Message, error) {
 	registro := strings.Split(message.Body, "%")
 	//9000%encamino
@@ -429,6 +493,16 @@ func (s *Server) CambiarIntentos(ctx context.Context, message *Message) (*Messag
 }
 
 //BuscarOrden is
+//CambiarIntentos is
+/***
+* func CambiarIntentos
+**
+* dado un numero de track busca la orden asociada
+**
+*
+* devuelve un mensaje el cual contiene el inicio y destino de la orden
+**
+***/
 func (s *Server) BuscarOrden(ctx context.Context, message *Message) (*Message, error) {
 	x := message.GetBody()
 	var me Message

@@ -13,7 +13,23 @@ import (
 	"github.com/streadway/amqp"
 )
 
-//PackJSON is a struct.
+//PackJSON is
+/***
+* struct PackJSON
+**
+* Estructura de paquetes tipo JSON
+**
+* Fields:
+* string ID : ID del paquete
+* string Track : Codigo de track del paquete
+* string Tipo : Tipo de paquete
+* int Valor : Valor del paquete
+* int Intentos : Numero de intentos para entregar
+* string Estado : Estado de recepcion del paquete
+* float64 Ganancia : Ganancias por el envio
+* float64 Perdida : Perdidas por el envio
+* float64 Total : Diferencia entre ganancias y perdidas
+***/
 type PackJSON struct {
 	ID       string  `json:"id"`
 	Track    string  `json:"track"`
@@ -27,6 +43,23 @@ type PackJSON struct {
 }
 
 //WriteData is
+/***
+* func WriteData
+**
+* Escribe datos de finanzas en archivo CSV
+**
+* Input:
+* string name : Nombre del archivo
+* string id : Id del paquete
+* string track : Codigo de track del paquete
+* string tipo : Tipo de paquete
+* int valor : Valor del paquete
+* int intentos : Numero de intentos para entregar
+* string estado : Estado de recepcion del paquete
+* float64 ganancia : Ganancias por el envio
+* float64 perdida : Perdidas por el envio
+* float64 total : Diferencia entre ganancias y perdidas
+***/
 func WriteData(name string, id string, track string, tipo string, valor int, intentos int, estado string, ganancia float64, perdida float64, total float64) {
 	registro := []string{id, track, tipo, strconv.Itoa(valor), strconv.Itoa(intentos), estado, strconv.FormatFloat(ganancia, 'f', 1, 64), strconv.FormatFloat(perdida, 'f', 1, 64), strconv.FormatFloat(total, 'f', 1, 64)}
 	csvfile, err := os.OpenFile(name, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
@@ -44,6 +77,14 @@ func WriteData(name string, id string, track string, tipo string, valor int, int
 }
 
 //CreateFile is
+/***
+* func CreateFile
+**
+* Crea archivos APPEND
+**
+* Input:
+* string name : Nombre del archivo CSV
+***/
 func CreateFile(name string) {
 
 	csvFile, err := os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -54,6 +95,16 @@ func CreateFile(name string) {
 	csvFile.Close()
 }
 
+//failOnError
+/***
+* func failOnError
+**
+* Detecta fallas en la conexion via RabbitMQ
+**
+* Input:
+* error err : Error de la conexion
+* string msg : Mensaje de falla al conectar
+***/
 func failOnError(err error, msg string) {
 	if err != nil {
 		log.Fatalf("%s: %s", msg, err)
@@ -200,6 +251,7 @@ func main() {
 		text = strings.Replace(text, "\r\n", "", -1)
 		if strings.Compare("1", text) == 0 {
 			fmt.Println("Ganancia: %f, Perdida: %f, Total: %f", tGanancia, tPerdida, tTotal)
+			break
 		}
 
 		if strings.Compare("2", text) == 0 {

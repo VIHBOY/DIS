@@ -16,7 +16,22 @@ import (
 	"google.golang.org/grpc"
 )
 
-//Camion is a struct.
+//Camion is
+/***
+* struct Camion
+**
+* Estructura de camiones
+**
+* Fields:
+* sync.Mutex : Herramienta para sincronizacion
+* int id : Id del camion
+* string Nombre : Tipo del camion
+* *chat.Paquete Paquete1 : Puntero al primer paquete
+* *chat.Paquete Paquete2 : Puntero al segundo paquete
+* int LleveRetail : Flag que indica si se envio paquete retail en el envio anterior
+* int Deruta : Flag que indica si el camion esta ocupado
+* string NombreArchivo : Nombre del archivo CSV del camion
+***/
 type Camion struct {
 	mux           sync.Mutex
 	id            int
@@ -28,7 +43,17 @@ type Camion struct {
 	NombreArchivo string
 }
 
-//WriteData2 is a function.
+//WriteData2 is
+/***
+* func WriteData2
+**
+* Escribe datos de camiones en archivos
+**
+* Input:
+* string name : Nombre del archivo
+* *chat.Paquete paquete : Puntero al paquete
+* *(chat.Message) auxiliar : Puntero de un response de logistica
+***/
 func WriteData2(name string, paquete *chat.Paquete, auxiliar *(chat.Message)) {
 	registro2 := strings.Split(auxiliar.Body, "%")
 	inicio, destino := registro2[0], registro2[1]
@@ -48,7 +73,15 @@ func WriteData2(name string, paquete *chat.Paquete, auxiliar *(chat.Message)) {
 	csvfile.Close()
 }
 
-//CreateFile is a function.
+//CreateFile is
+/***
+* func CreateFile
+**
+* Crea archivos APPEND
+**
+* Input:
+* string name : Nombre del archivo CSV
+***/
 func CreateFile(name string) {
 
 	csvFile, err := os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -59,7 +92,17 @@ func CreateFile(name string) {
 	csvFile.Close()
 }
 
-//EnviarPaquete is a function.
+//EnviarPaquete is
+/***
+* func EnviarPaquete
+**
+* Envia paquetes a destino
+**
+* Input:
+* *Camion camion : Puntero a un camion
+* chat.ChatServiceClient c : Llamada a funciones de chat.go
+* int np : Numero del paquete (1 o 2)
+***/
 func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 	rand.Seed(time.Now().UnixNano())
 	prob := rand.Intn(6-1) + 1
@@ -109,7 +152,17 @@ func EnviarPaquete(camion *Camion, c chat.ChatServiceClient, np int) {
 
 }
 
-//Send is a function.
+//Send is
+/***
+* func Send
+**
+* Envia paquetes y le informa el resultado a logistica
+**
+* Input:
+* *Camion camion : Puntero a un camion
+* int tespera : Tiempo de espera por un segundo paquete del camión
+* int tenvio : Tiempo que demora en entregar un paquete un camión
+***/
 func Send(camion *Camion, tespera int, tenvio int) {
 	var conn *grpc.ClientConn
 	var me chat.Message

@@ -9,11 +9,15 @@ import (
 	"google.golang.org/grpc"
 )
 
-//Server is
-type Server struct {
-}
-
-//CreateFile is a function. Recibo como parametro el nombre del archivo.
+//CreateFile is
+/***
+* func CreateFile
+**
+* Crea archivos APPEND
+**
+* Input:
+* string name : Nombre del archivo CSV
+***/
 func CreateFile(name string) {
 	csvFile, err := os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
@@ -24,7 +28,15 @@ func CreateFile(name string) {
 	csvFile.Close()
 }
 
-//Connect is a function.
+//Connect is
+/***
+* func connect
+**
+* Crear un server gRPC, para hacer conexiones a cliente y camion
+**
+* Input:
+* net.Listener l : Credenciales para el servidor
+***/
 func connect(l net.Listener) {
 	s := chat.Server{}
 	grpcServer := grpc.NewServer()
