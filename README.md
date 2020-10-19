@@ -18,19 +18,19 @@ Las maquinas virtuales ya tienen todo lo necesario para realizar pruebas.
 _Se debe seguir estos pasos para poder ejecutar la tarea_
 
 ```
-1. En la Maquina dist25, se debe ejecutar go run logistica.go
+1. En la Maquina dist25, se debe ejecutar make
 
 Lo que le otorgara a la maquina el rol de LOGISTICA
 
-2. En la Maquina dist28, se debe ejecutar go run finanza.go
+2. En la Maquina dist28, se debe ejecutar make
 
 Lo que le otorgara a la maquina el rol de FINANCIERO
 
-3. En la Maquina dist26, se debe ejecutar go run cliente.go
+3. En la Maquina dist26, se debe ejecutar make
 
 Lo que le otorgara a la maquina el rol de CLIENTE
 
-4. En la Maquina dist27, se debe ejecutar go run camion.go
+4. En la Maquina dist27, se debe ejecutar make
 
 Lo que le otorgara a la maquina el rol de CAMION
 ```
