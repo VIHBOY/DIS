@@ -41,24 +41,22 @@ En todo momento se debe mantener encendido el servidor.
 
 ## Consideraciones Clientes ⚙️
 
-```
-make
-java MergeSort
-```
-_Se le pedira que entregue por terminal una lista con el siguiente formato: 1,3,9,4,2_
+La forma en que esta implementado el aspecto de cliente permite poder conectarse de diferentes isntancias de cliente o un solo cliente puede cargar los
+distintos tipos de datos, como se puede observar en el menu
 
-_Luego se mostrara por la misma terminal la lista ordenada_
+## Consideraciones Camion ⚙️
 
-### Explicación de MergeSort con Multihebra
-_Al momento de dividir el arreglo con la tecnica merge, durante la aplicacion de mergesort se aplicaran hebras, para que todos los subarreglos se ordenen y junten, ya que el algoritmo original va ordenando por subarreglo, mientras los otros se quedan esperando, lo cual no seria optimo comparado con lo descrito al principio_
+Se solicitan los tiempos en un inicio y estos se mantendran así
 
-## Construido con 🛠️
+## Consideraciones Financiero ⚙️
 
-* [VS code] - Editor de texto
+Se debe ejecutar antes de camion
 
-## Autores ✒️
+## Construido con
 
-* **Joaquin Concha** - 201773569-4 *VIHBOY*
-    -_Problema 1_
-* **Renato Bassi** - 201773521-K *bassisi*
-    -_Problema 2_  
+[VS CODE] - Editor de texto
+
+## Autores
+
+**Joaquin Concha** - 201773569-4 *VIHBOY*
+**Renato Bassi** - 201773521-k *bassisi*
